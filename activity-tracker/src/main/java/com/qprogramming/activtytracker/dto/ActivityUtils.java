@@ -5,8 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Date;
 
 public class ActivityUtils {
-
-
     private static final int TYPE = 0;
     private static final int START = 1;
     private static final int END = 2;
