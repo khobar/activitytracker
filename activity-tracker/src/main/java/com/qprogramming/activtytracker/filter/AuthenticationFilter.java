@@ -8,19 +8,20 @@ import org.glassfish.jersey.internal.util.Base64;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.qprogramming.activtytracker.utils.FileUtils.getFileBasedOnProperty;
+import static com.qprogramming.activtytracker.utils.FileUtils.getFile;
 
 @Provider
 public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequestFilter {
@@ -37,14 +38,15 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
     @Context
     private ResourceInfo resourceInfo;
 
-    public AuthenticationFilter() throws IOException, ConfigurationException {
-        users = new HashSet<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(getFileBasedOnProperty(USERS_FILE)))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                users.add(UserUtils.fromLine(line));
-            }
-        }
+    private Properties properties;
+
+    @Inject
+    public AuthenticationFilter(Properties props) throws IOException, ConfigurationException {
+        this.properties = props;
+        users = Files.readAllLines(getFile(properties.getProperty(USERS_FILE)).toPath())
+                .stream()
+                .map(UserUtils::fromLine)
+                .collect(Collectors.toSet());
     }
 
     @Override
