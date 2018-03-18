@@ -8,6 +8,7 @@ import org.glassfish.jersey.internal.util.Base64;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
@@ -20,7 +21,7 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.qprogramming.activtytracker.utils.FileUtils.getFileBasedOnProperty;
+import static com.qprogramming.activtytracker.utils.FileUtils.getFile;
 
 @Provider
 public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequestFilter {
@@ -37,8 +38,15 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
     @Context
     private ResourceInfo resourceInfo;
 
-    public AuthenticationFilter() throws IOException, ConfigurationException {
-        users = Files.readAllLines(getFileBasedOnProperty(USERS_FILE).toPath()).stream().map(UserUtils::fromLine).collect(Collectors.toSet());
+    private Properties properties;
+
+    @Inject
+    public AuthenticationFilter(Properties props) throws IOException, ConfigurationException {
+        this.properties = props;
+        users = Files.readAllLines(getFile(properties.getProperty(USERS_FILE)).toPath())
+                .stream()
+                .map(UserUtils::fromLine)
+                .collect(Collectors.toSet());
     }
 
     @Override

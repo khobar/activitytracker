@@ -7,12 +7,12 @@ import java.io.File;
 import java.io.IOException;
 
 public class FileUtils {
-    public static File getFileBasedOnProperty(String fileProperty) throws ConfigurationException, IOException {
-        String filename = System.getProperty(fileProperty);
-        if (StringUtils.isEmpty(filename)) {
+
+    public static File getFile(String fileName) throws ConfigurationException, IOException {
+        if (StringUtils.isEmpty(fileName)) {
             throw new ConfigurationException("Failed to find file");
         }
-        File file = new File(filename);
+        File file = new File(fileName);
         if (!file.exists()) {
             file.createNewFile();
         }

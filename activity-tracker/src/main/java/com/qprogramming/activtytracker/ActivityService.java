@@ -5,6 +5,7 @@ import com.qprogramming.activtytracker.dto.ActivityUtils;
 import com.qprogramming.activtytracker.exceptions.ConfigurationException;
 import org.jvnet.hk2.annotations.Service;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -12,14 +13,22 @@ import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static com.qprogramming.activtytracker.dto.ActivityUtils.stringifyTimes;
-import static com.qprogramming.activtytracker.utils.FileUtils.getFileBasedOnProperty;
+import static com.qprogramming.activtytracker.utils.FileUtils.getFile;
 
 @Service
 public class ActivityService {
     public static final String DATABASE_FILE = "database.file";
+
+    private Properties properties;
+
+    @Inject
+    public ActivityService(Properties properties) {
+        this.properties = properties;
+    }
 
     /**
      * Returns last active {@link Activity}. If last activity in list have end time ( is no longer active) return null
@@ -41,7 +50,7 @@ public class ActivityService {
      * @throws ConfigurationException If application was not run properly with parameter pointing to db file
      */
     public List<Activity> loadAll() throws IOException, ConfigurationException {
-        File dbFile = getFileBasedOnProperty(DATABASE_FILE);
+        File dbFile = getFile(properties.getProperty(DATABASE_FILE));
         return Files.readAllLines(dbFile.toPath(), StandardCharsets.UTF_8)
                 .stream()
                 .map(ActivityUtils::fromLine)
@@ -57,7 +66,7 @@ public class ActivityService {
      * @throws ConfigurationException If application was not run properly with parameter pointing to db file
      */
     public void saveAll(List<Activity> activities) throws ConfigurationException, IOException {
-        File dbFile = getFileBasedOnProperty(DATABASE_FILE);
+        File dbFile = getFile(properties.getProperty(DATABASE_FILE));
         Files.write(dbFile.toPath(), activities
                 .stream()
                 .sorted(Comparator.comparing(Activity::getStart))
