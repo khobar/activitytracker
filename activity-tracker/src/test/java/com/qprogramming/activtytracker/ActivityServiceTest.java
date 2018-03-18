@@ -11,19 +11,24 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import static com.qprogramming.activtytracker.ActivityService.DATABASE_FILE;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ActivityServiceTest {
 
+    private Properties propertiesMock;
     private ActivityService activityService;
 
     @Before
     public void setUp() {
-        activityService = new ActivityService();
+        propertiesMock = mock(Properties.class);
         URL resource = getClass().getResource("database");
-        System.setProperty(DATABASE_FILE, resource.getFile());
+        when(propertiesMock.getProperty(DATABASE_FILE)).thenReturn(resource.getFile());
+        activityService = new ActivityService(propertiesMock);
     }
 
 
@@ -47,7 +52,7 @@ public class ActivityServiceTest {
 
     @Test(expected = ConfigurationException.class)
     public void testLoadAllException() throws IOException, ConfigurationException {
-        System.clearProperty(DATABASE_FILE);
+        when(propertiesMock.getProperty(DATABASE_FILE)).thenReturn(null);
         List<Activity> activities = activityService.loadAll();
         fail("Exception was not thrown");
     }

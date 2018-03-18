@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import static com.qprogramming.activtytracker.ActivityService.DATABASE_FILE;
 import static org.junit.Assert.*;
@@ -20,21 +21,23 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
 
 public class ActivityControllerTest {
+    private Properties propertiesMock;
     private ActivityController ctr;
     private ActivityService activityService;
 
     @Before
     public void setUp() {
-        activityService = spy(ActivityService.class);
-        ctr = new ActivityController(activityService);
+        propertiesMock = mock(Properties.class);
         URL resource = getClass().getResource("database");
-        System.setProperty(DATABASE_FILE, resource.getFile());
+        doReturn(resource.getFile()).when(propertiesMock).getProperty(DATABASE_FILE);
+        activityService = spy(new ActivityService(propertiesMock));
+        ctr = new ActivityController(activityService);
     }
 
     @Test
     public void testList() throws Exception {
         ArrayList<Activity> activities = createActivities();
-        when(activityService.loadAll()).thenReturn(activities);
+        doReturn(activities).when(activityService).loadAll();
         Response response = ctr.list();
         assertEquals(200, response.getStatus());
         ArrayList<Activity> result = (ArrayList<Activity>) response.getEntity();
@@ -44,8 +47,8 @@ public class ActivityControllerTest {
     @Test
     public void testGetActive() throws Exception {
         ArrayList<Activity> activities = createActivities();
-        when(activityService.loadAll()).thenReturn(activities);
-        when(activityService.getLastActive(activities)).thenCallRealMethod();
+        doReturn(activities).when(activityService).loadAll();
+        doCallRealMethod().when(activityService).getLastActive(activities);
         Activity result = (Activity) ctr.getActive().getEntity();
         assertNull(result.getEnd());
     }
@@ -54,8 +57,8 @@ public class ActivityControllerTest {
     public void testGetNoActive() throws Exception {
         ArrayList<Activity> activities = createActivities();
         activities.get(1).setEnd(LocalDateTime.now().plusMinutes(1));
-        when(activityService.loadAll()).thenReturn(activities);
-        when(activityService.getLastActive(activities)).thenCallRealMethod();
+        doReturn(activities).when(activityService).loadAll();
+        doCallRealMethod().when(activityService).getLastActive(activities);
         Activity result = (Activity) ctr.getActive().getEntity();
         assertNull(result);
     }
@@ -81,7 +84,7 @@ public class ActivityControllerTest {
         ctr = new ActivityController(activityService);
         ArrayList<Activity> activities = createActivities();
         Activity ac = new Activity();
-        when(activityService.loadAll()).thenReturn(activities);
+        doReturn(activities).when(activityService).loadAll();
         when(activityService.addNewActivity(ac, true)).then(returnsFirstArg());
         Response response = ctr.startActivity(ac);
         Activity activity = (Activity) response.getEntity();
@@ -92,8 +95,8 @@ public class ActivityControllerTest {
     @Test
     public void testStopActivity() throws IOException, ConfigurationException {
         ArrayList<Activity> activities = createActivities();
-        when(activityService.loadAll()).thenReturn(activities);
-        when(activityService.getLastActive(activities)).thenCallRealMethod();
+        doReturn(activities).when(activityService).loadAll();
+        doCallRealMethod().when(activityService).getLastActive(activities);
         Response response = ctr.stopActivity();
         Activity activity = (Activity) response.getEntity();
         verify(activityService, times(1)).saveAll(activities);
