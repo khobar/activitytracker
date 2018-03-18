@@ -3,6 +3,7 @@ package com.qprogramming.activtytracker.filter;
 import com.qprogramming.activtytracker.dto.User;
 import com.qprogramming.activtytracker.dto.UserUtils;
 import com.qprogramming.activtytracker.exceptions.ConfigurationException;
+import com.qprogramming.activtytracker.exceptions.dto.ErrorMessage;
 import org.glassfish.jersey.internal.util.Base64;
 
 import javax.annotation.security.DenyAll;
@@ -29,10 +30,6 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
     public static final String USERS_FILE = "users.file";
     private static final String AUTHORIZATION_PROPERTY = "Authorization";
     private static final String AUTHENTICATION_SCHEME = "Basic";
-    private static final Response ACCESS_DENIED = Response.status(Response.Status.UNAUTHORIZED)
-            .entity("{You cannot access this resource}").build();
-    private static final Response ACCESS_FORBIDDEN = Response.status(Response.Status.FORBIDDEN)
-            .entity("{Access blocked for all users !!}").build();
     private final Set<User> users;
 
     @Context
@@ -54,13 +51,13 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
         Method method = resourceInfo.getResourceMethod();
         if (!method.isAnnotationPresent(PermitAll.class)) {
             if (method.isAnnotationPresent(DenyAll.class)) {
-                requestContext.abortWith(ACCESS_FORBIDDEN);
+                requestContext.abortWith(forbiden());
                 return;
             }
             final MultivaluedMap<String, String> headers = requestContext.getHeaders();
             final List<String> authorization = headers.get(AUTHORIZATION_PROPERTY);
             if (authorization == null || authorization.isEmpty()) {
-                requestContext.abortWith(ACCESS_DENIED);
+                requestContext.abortWith(unathorized());
                 return;
             }
             final String encodedUserPassword = authorization.get(0).replaceFirst(AUTHENTICATION_SCHEME + " ", "");
@@ -73,7 +70,7 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
                 Set<String> rolesSet = new HashSet<>(Arrays.asList(rolesAnnotation.value()));
                 User user = new User(apiKey, secret);
                 if (!isUserAllowed(user, rolesSet)) {
-                    requestContext.abortWith(ACCESS_DENIED);
+                    requestContext.abortWith(unathorized());
                 }
             }
         }
@@ -88,5 +85,14 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
             }
         }
         return isAllowed;
+    }
+
+    private Response unathorized() {
+        return Response.status(Response.Status.UNAUTHORIZED)
+                .entity(new ErrorMessage(Response.Status.UNAUTHORIZED, "You cannot access this resource")).build();
+    }
+    private Response forbiden() {
+        return Response.status(Response.Status.FORBIDDEN)
+                .entity(new ErrorMessage(Response.Status.FORBIDDEN, "Access blocked for all users !!")).build();
     }
 }
