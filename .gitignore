@@ -1,3 +1,6 @@
 .idea/
 .target/
 *.iml
+.target/*
+activity-tracker/target/*
+gear-webapp/target/*
