@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.qprogramming.gear</groupId>
         <artifactId>gear-companion</artifactId>
-        <version>0.1</version>
+        <version>0.2-SNAPSHOT</version>
     </parent>
     <artifactId>activity-tracker</artifactId>
     <packaging>jar</packaging>
