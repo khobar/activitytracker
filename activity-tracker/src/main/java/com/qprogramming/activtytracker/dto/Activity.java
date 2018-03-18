@@ -65,4 +65,30 @@ public class Activity {
     public long getHours() {
         return minutes != 0 ? minutes / 60 : 0;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Activity activity = (Activity) o;
+        if (!start.equals(activity.start)) {
+            return false;
+        }
+        if (end != null ? !end.equals(activity.end) : activity.end != null) {
+            return false;
+        }
+        return type == activity.type;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = start.hashCode();
+        result = 31 * result + (end != null ? end.hashCode() : 0);
+        result = 31 * result + type.hashCode();
+        return result;
+    }
 }

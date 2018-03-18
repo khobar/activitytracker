@@ -4,10 +4,12 @@ import com.qprogramming.activtytracker.dto.Activity;
 import com.qprogramming.activtytracker.dto.ActivityUtils;
 import com.qprogramming.activtytracker.dto.Type;
 import com.qprogramming.activtytracker.exceptions.ConfigurationException;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.validation.ValidationException;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -51,25 +53,36 @@ public class ActivityController {
     }
 
     @PUT
-    @Path("/start")
+    @Path("/add")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("USER")
     public Response addActivity(Activity ac) throws ConfigurationException, IOException {
+        if (StringUtils.isEmpty(ac.getStartTime())) {
+            throw new ValidationException("No start date time in passed activity");
+        }
+        ac.setStart(LocalDateTime.parse(ac.getStartTime()));
+        if (ac.getEndTime() == null && ac.getMinutes() != 0) {
+            ac.setEnd(ac.getStart().plusMinutes(ac.getMinutes()));
+        } else {
+            ac.setEnd(LocalDateTime.parse(ac.getEndTime()));
+        }
+        ac = activityService.addNewActivity(ac, false);
+        return Response.ok(ac).build();
+    }
+
+
+    @PUT
+    @Path("/start")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("USER")
+    public Response startActivity(Activity ac) throws ConfigurationException, IOException {
         if (ac.getStart() == null) {
             ac.setStart(LocalDateTime.now());
         }
         if (ac.getType() == null) {
             ac.setType(Type.SM);
         }
-        List<Activity> activities = activityService.loadAll();
-        Activity lastActive = activityService.getLastActive(activities);
-        if (lastActive != null) {
-            lastActive.setEnd(LocalDateTime.now());
-            ActivityUtils.updateMinutes(lastActive);
-        }
-        activities.add(ac);
-        activityService.saveAll(activities);
-        stringifyTimes(ac);
+        ac = activityService.addNewActivity(ac, true);
         return Response.ok(ac).build();
     }
 

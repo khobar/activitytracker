@@ -1,6 +1,7 @@
 package com.qprogramming.activtytracker;
 
 import com.qprogramming.activtytracker.dto.Activity;
+import com.qprogramming.activtytracker.dto.Type;
 import com.qprogramming.activtytracker.exceptions.ConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +26,19 @@ public class ActivityServiceTest {
         System.setProperty(DATABASE_FILE, resource.getFile());
     }
 
+
+    @Test
+    public void testLoadLastActive() throws IOException, ConfigurationException {
+        Activity ac1 = new Activity();
+        ac1.setStart(LocalDateTime.now());
+        ac1.setEnd(LocalDateTime.now().plusHours(1));
+        Activity ac2 = new Activity();
+        ac2.setStart(LocalDateTime.now().plusHours(1));
+        List<Activity> activities = Arrays.asList(ac1, ac2);
+        Activity lastActive = activityService.getLastActive(activities);
+        assertNotNull(lastActive);
+    }
+
     @Test
     public void testLoadAll() throws IOException, ConfigurationException {
         List<Activity> activities = activityService.loadAll();
@@ -38,12 +52,6 @@ public class ActivityServiceTest {
         fail("Exception was not thrown");
     }
 
-    @Test
-    public void testLoadLastActive() throws IOException, ConfigurationException {
-        List<Activity> activities = activityService.loadAll();
-        Activity lastActive = activityService.getLastActive(activities);
-        assertNotNull(lastActive);
-    }
 
     @Test
     public void testLoadLastActiveNotFound() {
@@ -56,6 +64,15 @@ public class ActivityServiceTest {
         List<Activity> activities = Arrays.asList(ac1, ac2);
         Activity lastActive = activityService.getLastActive(activities);
         assertNull(lastActive);
+    }
+
+    @Test
+    public void testAddNewActivityComplete() throws IOException, ConfigurationException {
+        Activity ac = new Activity();
+        ac.setType(Type.SM);
+        ac.setStart(LocalDateTime.now());
+        Activity activity = activityService.addNewActivity(ac, true);
+        assertNotNull(activity.getStartTime());
     }
 
 }
