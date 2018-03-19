@@ -62,8 +62,8 @@ public class Activity {
         this.minutes = minutes;
     }
 
-    public long getHours() {
-        return minutes != 0 ? minutes / 60 : 0;
+    public double getHours() {
+        return ActivityUtils.getHours(minutes);
     }
 
     @Override

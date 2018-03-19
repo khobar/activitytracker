@@ -1,6 +1,7 @@
 package com.qprogramming.activtytracker;
 
 import com.qprogramming.activtytracker.dto.Activity;
+import com.qprogramming.activtytracker.dto.ActivityReport;
 import com.qprogramming.activtytracker.dto.ActivityUtils;
 import com.qprogramming.activtytracker.dto.Type;
 import com.qprogramming.activtytracker.exceptions.ConfigurationException;
@@ -19,10 +20,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.qprogramming.activtytracker.dto.ActivityUtils.stringifyTimes;
+import static java.util.stream.Collectors.groupingBy;
 
 @Singleton
 @Path("/")
@@ -115,4 +120,22 @@ public class ActivityController {
         }
         return Response.ok(lastActive).build();
     }
+
+    @GET
+    @Path("/report")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("USER")
+    public Response getDailyReport() throws ConfigurationException, IOException {
+        List<Activity> activities = activityService.loadAll();
+        Map<LocalDate, List<Activity>> grouped = activities
+                .stream()
+                .collect(groupingBy(activity -> activity.getStart().toLocalDate(), Collectors.toList()));
+        List<ActivityReport> activityReports = grouped.entrySet()
+                .stream()
+                .map(activityService::createActivityReport)
+                .collect(Collectors.toList());
+        return Response.ok(activityReports).build();
+    }
+
+
 }

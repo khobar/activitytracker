@@ -1,6 +1,7 @@
 package com.qprogramming.activtytracker;
 
 import com.qprogramming.activtytracker.dto.Activity;
+import com.qprogramming.activtytracker.dto.ActivityReport;
 import com.qprogramming.activtytracker.dto.ActivityUtils;
 import com.qprogramming.activtytracker.dto.Type;
 import com.qprogramming.activtytracker.exceptions.ConfigurationException;
@@ -11,13 +12,18 @@ import javax.validation.ValidationException;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 import static com.qprogramming.activtytracker.ActivityService.DATABASE_FILE;
+import static com.qprogramming.activtytracker.ActivityTestUtil.createActivities;
 import static org.junit.Assert.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.AdditionalAnswers.returnsSecondArg;
 import static org.mockito.Mockito.*;
 
 public class ActivityControllerTest {
@@ -29,7 +35,8 @@ public class ActivityControllerTest {
     public void setUp() {
         propertiesMock = mock(Properties.class);
         URL resource = getClass().getResource("database");
-        doReturn(resource.getFile()).when(propertiesMock).getProperty(DATABASE_FILE);
+        when(propertiesMock.getProperty(DATABASE_FILE)).thenReturn(resource.getFile());
+        when(propertiesMock.getOrDefault(anyString(), anyLong())).then(returnsSecondArg());
         activityService = spy(new ActivityService(propertiesMock));
         ctr = new ActivityController(activityService);
     }
@@ -61,21 +68,6 @@ public class ActivityControllerTest {
         doCallRealMethod().when(activityService).getLastActive(activities);
         Activity result = (Activity) ctr.getActive().getEntity();
         assertNull(result);
-    }
-
-
-    private ArrayList<Activity> createActivities() {
-        ArrayList<Activity> activities = new ArrayList<>();
-        Activity activity = new Activity();
-        activity.setStart(LocalDateTime.now().minusHours(1));
-        activity.setEnd(LocalDateTime.now());
-        activity.setType(Type.SM);
-        Activity activity1 = new Activity();
-        activity1.setStart(LocalDateTime.now());
-        activity1.setType(Type.SM);
-        activities.add(activity);
-        activities.add(activity1);
-        return activities;
     }
 
     @Test
@@ -133,6 +125,26 @@ public class ActivityControllerTest {
         ac.setType(Type.SM);
         Response response = ctr.addActivity(ac);
         fail("Validation Exception was not thrown");
+    }
+
+    @Test
+    public void testCreateActivityReport() throws IOException, ConfigurationException {
+        ArrayList<Activity> activities = createActivities();
+        Activity activity = new Activity();
+        activity.setStart(LocalDateTime.now().minusDays(1));
+        activity.setType(Type.SM);
+        activity.setMinutes(80);
+        activities.add(activity);
+        doReturn(activities).when(activityService).loadAll();
+        doCallRealMethod().when(activityService).createActivityReport(any());
+        Response dailyReport = ctr.getDailyReport();
+        List<ActivityReport> activityReports = (List<ActivityReport>) dailyReport.getEntity();
+        Optional<ActivityReport> prevActivity = activityReports.stream().filter(activityReport -> activityReport.getLocaldate().equals(LocalDate.now().minusDays(1))).findFirst();
+        assertTrue(activityReports.size() > 0);
+        assertTrue(prevActivity.isPresent());
+        long devMinutes = prevActivity.get().getMinutes().get(Type.DEV);
+        assertEquals(340L, devMinutes);
+
     }
 
 }
