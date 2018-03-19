@@ -37,6 +37,9 @@ public class ActivityService {
      * @return last Active task or null
      */
     public Activity getLastActive(List<Activity> activities) {
+        if (activities == null || activities.size() == 0) {
+            return null;
+        }
         Activity lastActivity = activities.get(activities.size() - 1);
         return lastActivity.getEnd() == null ? lastActivity : null;
     }

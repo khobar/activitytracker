@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -70,6 +71,13 @@ public class ActivityServiceTest {
         Activity lastActive = activityService.getLastActive(activities);
         assertNull(lastActive);
     }
+    @Test
+    public void testLoadLastActiveEmptyList() {
+        List<Activity> activities = new ArrayList<>();
+        Activity lastActive = activityService.getLastActive(activities);
+        assertNull(lastActive);
+    }
+
 
     @Test
     public void testAddNewActivityComplete() throws IOException, ConfigurationException {
