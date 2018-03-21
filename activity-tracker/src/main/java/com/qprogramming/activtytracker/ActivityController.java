@@ -11,10 +11,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ValidationException;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -57,7 +54,7 @@ public class ActivityController {
         return Response.ok(activityService.loadAll()).build();
     }
 
-    @PUT
+    @POST
     @Path("/add")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("USER")
@@ -76,7 +73,7 @@ public class ActivityController {
     }
 
 
-    @PUT
+    @POST
     @Path("/start")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("USER")
@@ -91,7 +88,7 @@ public class ActivityController {
         return Response.ok(ac).build();
     }
 
-    @PUT
+    @POST
     @Path("/stop")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("USER")
