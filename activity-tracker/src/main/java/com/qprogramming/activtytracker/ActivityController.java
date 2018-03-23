@@ -11,7 +11,10 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ValidationException;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -19,6 +22,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -114,6 +118,7 @@ public class ActivityController {
         Activity lastActive = activityService.getLastActive(activities);
         if (lastActive != null) {
             stringifyTimes(lastActive);
+            lastActive.setMinutes(lastActive.getStart().until(LocalDateTime.now(), ChronoUnit.MINUTES));
         }
         return Response.ok(lastActive).build();
     }

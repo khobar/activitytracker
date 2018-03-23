@@ -16,7 +16,7 @@ public class ActivityTestUtil {
         activity.setType(Type.SM);
         activity.setMinutes(60);
         Activity activity1 = new Activity();
-        activity1.setStart(LocalDateTime.now());
+        activity1.setStart(LocalDateTime.now().minusMinutes(1));
         activity1.setType(Type.SM);
         activities.add(activity);
         activities.add(activity1);

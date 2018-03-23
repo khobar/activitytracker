@@ -90,10 +90,10 @@ public class ActivityUtils {
 
     public static void stringifyTimes(Activity ac) {
         if (ac.getStart() != null) {
-            ac.setStartTime(ac.getStart().toString());
+            ac.setStartTime(ac.getStart().format(dtf));
         }
         if (ac.getEnd() != null) {
-            ac.setEndTime(ac.getEnd().toString());
+            ac.setEndTime(ac.getEnd().format(dtf));
         }
     }
 }

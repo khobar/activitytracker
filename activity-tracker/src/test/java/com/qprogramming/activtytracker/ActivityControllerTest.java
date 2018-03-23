@@ -58,6 +58,7 @@ public class ActivityControllerTest {
         doCallRealMethod().when(activityService).getLastActive(activities);
         Activity result = (Activity) ctr.getActive().getEntity();
         assertNull(result.getEnd());
+        assertEquals(1l,result.getMinutes());
     }
 
     @Test
