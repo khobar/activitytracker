@@ -7,6 +7,7 @@
     <version>0.2-SNAPSHOT</version>
     <modules>
         <module>activity-tracker</module>
+        <module>activity-angular</module>
         <module>gear-webapp</module>
     </modules>
     <name>gear companion</name>
@@ -14,6 +15,7 @@
     <properties>
         <jersey2.version>2.19</jersey2.version>
         <jaxrs.version>2.0.1</jaxrs.version>
+        <app.final.name>gear</app.final.name>
     </properties>
     <dependencies>
         <dependency>
@@ -21,26 +23,6 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-servlet</artifactId>
-            <version>${jersey2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>${jersey2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-jackson</artifactId>
-            <version>${jersey2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.lukehutch</groupId>
-            <artifactId>fast-classpath-scanner</artifactId>
-            <version>2.18.1</version>
         </dependency>
         <!--TESTING-->
         <dependency>
@@ -58,7 +40,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>gear</finalName>
+        <finalName>${app.final.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
