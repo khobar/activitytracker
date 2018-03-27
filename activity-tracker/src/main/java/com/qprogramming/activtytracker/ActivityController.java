@@ -5,8 +5,11 @@ import com.qprogramming.activtytracker.dto.ActivityReport;
 import com.qprogramming.activtytracker.dto.ActivityUtils;
 import com.qprogramming.activtytracker.dto.Type;
 import com.qprogramming.activtytracker.exceptions.ConfigurationException;
+import com.qprogramming.activtytracker.user.UserService;
+import com.qprogramming.activtytracker.user.dto.User;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -35,13 +38,15 @@ import static java.util.stream.Collectors.groupingBy;
 public class ActivityController {
 
     private ActivityService activityService;
+    private UserService userService;
 
     @Context
     private Configuration configuration;
 
     @Inject
-    public ActivityController(ActivityService activityService) {
+    public ActivityController(ActivityService activityService, UserService userService) {
         this.activityService = activityService;
+        this.userService = userService;
     }
 
     @GET
@@ -139,5 +144,15 @@ public class ActivityController {
         return Response.ok(activityReports).build();
     }
 
-
+    @POST
+    @Path("/user")
+    @Produces(MediaType.APPLICATION_JSON)
+    @PermitAll
+    public Response getUser(User user) {
+        User dbUser = userService.getUser(user);
+        if (dbUser == null) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        return Response.ok(dbUser).build();
+    }
 }

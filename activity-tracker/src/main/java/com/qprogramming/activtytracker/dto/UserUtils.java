@@ -1,5 +1,6 @@
 package com.qprogramming.activtytracker.dto;
 
+import com.qprogramming.activtytracker.user.dto.User;
 import org.apache.commons.lang3.StringUtils;
 
 public class UserUtils {

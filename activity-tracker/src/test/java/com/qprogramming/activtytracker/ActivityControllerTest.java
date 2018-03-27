@@ -5,6 +5,8 @@ import com.qprogramming.activtytracker.dto.ActivityReport;
 import com.qprogramming.activtytracker.dto.ActivityUtils;
 import com.qprogramming.activtytracker.dto.Type;
 import com.qprogramming.activtytracker.exceptions.ConfigurationException;
+import com.qprogramming.activtytracker.user.UserService;
+import com.qprogramming.activtytracker.user.dto.User;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,15 +32,17 @@ public class ActivityControllerTest {
     private Properties propertiesMock;
     private ActivityController ctr;
     private ActivityService activityService;
+    private UserService userServiceMock;
 
     @Before
     public void setUp() {
         propertiesMock = mock(Properties.class);
+        userServiceMock = mock(UserService.class);
         URL resource = getClass().getResource("database");
         when(propertiesMock.getProperty(DATABASE_FILE)).thenReturn(resource.getFile());
         when(propertiesMock.getOrDefault(anyString(), anyLong())).then(returnsSecondArg());
         activityService = spy(new ActivityService(propertiesMock));
-        ctr = new ActivityController(activityService);
+        ctr = new ActivityController(activityService, userServiceMock);
     }
 
     @Test
@@ -58,7 +62,7 @@ public class ActivityControllerTest {
         doCallRealMethod().when(activityService).getLastActive(activities);
         Activity result = (Activity) ctr.getActive().getEntity();
         assertNull(result.getEnd());
-        assertEquals(1l,result.getMinutes());
+        assertEquals(1l, result.getMinutes());
     }
 
     @Test
@@ -74,7 +78,7 @@ public class ActivityControllerTest {
     @Test
     public void testStartActivity() throws IOException, ConfigurationException {
         activityService = mock(ActivityService.class);
-        ctr = new ActivityController(activityService);
+        ctr = new ActivityController(activityService, userServiceMock);
         ArrayList<Activity> activities = createActivities();
         Activity ac = new Activity();
         doReturn(activities).when(activityService).loadAll();
@@ -100,7 +104,7 @@ public class ActivityControllerTest {
     @Test
     public void addActivity() throws IOException, ConfigurationException {
         activityService = mock(ActivityService.class);
-        ctr = new ActivityController(activityService);
+        ctr = new ActivityController(activityService, userServiceMock);
         ArrayList<Activity> activities = createActivities();
         Activity ac = new Activity();
         ac.setStartTime("2018-03-18T14:00");
@@ -145,6 +149,29 @@ public class ActivityControllerTest {
         assertTrue(prevActivity.isPresent());
         long devMinutes = prevActivity.get().getMinutes().get(Type.DEV);
         assertEquals(340L, devMinutes);
+    }
+
+    @Test
+    public void testUserFound() {
+        User user = new User();
+        user.setApiKey("A");
+        user.setSecret("B");
+        user.setRole("USER");
+        when(userServiceMock.getUser(user)).then(returnsFirstArg());
+        Response response = ctr.getUser(user);
+        User responseUser = (User) response.getEntity();
+        assertEquals(user, responseUser);
+    }
+
+    @Test
+    public void testUserNotFound() {
+        User user = new User();
+        user.setApiKey("A");
+        user.setSecret("B");
+        user.setRole("USER");
+        Response response = ctr.getUser(user);
+        assertEquals(Response.Status.FORBIDDEN,response.getStatusInfo());
+        assertFalse(response.hasEntity());
 
     }
 

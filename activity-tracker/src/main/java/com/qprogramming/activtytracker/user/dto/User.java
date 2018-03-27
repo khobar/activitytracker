@@ -1,4 +1,4 @@
-package com.qprogramming.activtytracker.dto;
+package com.qprogramming.activtytracker.user.dto;
 
 public class User {
     private String apiKey;
