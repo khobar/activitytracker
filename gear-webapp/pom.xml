@@ -27,7 +27,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>com.qprogramming.gear</groupId>
-                                    <artifactId>activity-angular</artifactId>
+                                    <artifactId>activity-app</artifactId>
                                     <overWrite>true</overWrite>
                                     <includes>**/*</includes>
                                 </artifactItem>
@@ -63,7 +63,7 @@
         </dependency>
         <dependency>
             <groupId>com.qprogramming.gear</groupId>
-            <artifactId>activity-angular</artifactId>
+            <artifactId>activity-app</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

@@ -7,7 +7,7 @@
     <version>0.2-SNAPSHOT</version>
     <modules>
         <module>activity-tracker</module>
-        <module>activity-angular</module>
+        <module>activity-app</module>
         <module>gear-webapp</module>
     </modules>
     <name>gear companion</name>
@@ -18,13 +18,13 @@
         <app.final.name>gear</app.final.name>
     </properties>
     <dependencies>
+        <!--TESTING-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-        <!--TESTING-->
         <dependency>
             <groupId>org.glassfish.jersey.test-framework</groupId>
             <artifactId>jersey-test-framework-core</artifactId>
