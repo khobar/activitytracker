@@ -54,6 +54,7 @@
               <executable>ng</executable>
               <arguments>
                 <argument>build</argument>
+                <argument>--env=local</argument>
                 <argument>--no-progress</argument>
                 <argument>--base-href=/${app.final.name}/</argument>
               </arguments>

@@ -8,10 +8,12 @@ import {AlertComponent} from './directives/alert/alert.component';
 import {HomeComponent} from './components/home/home.component';
 import {routing} from "./app.routing";
 import {FormsModule} from "@angular/forms";
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {AuthGuard} from "./guards/auth.guard";
 import {AlertService} from "./services/alert.service";
 import {AuthenticationService} from "./services/authentication.service";
+import {AuthInterceptor} from "./guards/auth.interceptor";
+import {ActivitiesService} from "./services/activities.service";
 
 
 @NgModule({
@@ -30,7 +32,13 @@ import {AuthenticationService} from "./services/authentication.service";
   providers: [
     AuthGuard,
     AlertService,
-    AuthenticationService],
+    ActivitiesService,
+    AuthenticationService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -5,8 +5,22 @@
 </div>
 <div class="row">
   <div class="col-sm-8 col-sm-offset-2">
-    <p>
-      home works!
-    </p>
+    <div *ngIf="!active" class="row">
+      <div class="col-sm-6">
+        <button class="btn btn-default" (click)="startActivity(Type.SM)">{{types[Type.SM]}}</button>
+      </div>
+      <div class="col-sm-6">
+        <button class="btn btn-default" (click)="startActivity(Type.DEV)">{{types[Type.DEV]}}</button>
+      </div>
+    </div>
+    <div *ngIf="active" class="row">
+      <p>Active Task:</p>
+      <p>Start time: {{active.startTime}}</p>
+      <p>Minutes: {{active.minutes}}</p>
+      <p>Type:{{types[active.type]}}</p>
+      <p>
+        <button class="btn btn-default" (click)="stopActive()">Stop Activity</button>
+      </p>
+    </div>
   </div>
 </div>

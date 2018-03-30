@@ -1,9 +1,9 @@
 export class User {
-  username: string;
-  password: string;
+  apiKey: string;
+  auth: string;
 
-  constructor(username: string, password: string) {
-    this.username = username;
-    this.password = btoa(password);
+  constructor(apiKey: string, secret: string) {
+    this.apiKey = apiKey;
+    this.auth = btoa(apiKey + ":" + secret);
   }
 }

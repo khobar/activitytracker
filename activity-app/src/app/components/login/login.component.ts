@@ -5,8 +5,7 @@ import {AlertService} from "../../services/alert.service";
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
   model: any = {};
@@ -27,16 +26,7 @@ export class LoginComponent implements OnInit {
 
   login() {
     this.loading = true;
-    //TODO stub
-    // this.authenticationService.login(this.model.apiKey, this.model.secret)
-    // if (this.authenticationService.loggedIn()) {
-    //   this.alertService.success("Logged in!");
-    //   this.router.navigate(["/"]);
-    // } else {
-    //   this.alertService.error("Wrong user");
-    //   this.loading = false;
-    // }
-    this.authenticationService.loginHttp(this.model.apiKey, this.model.secret)
+    this.authenticationService.login(this.model.apiKey, this.model.secret)
       .subscribe(
         data => {
           this.router.navigate(["/"]);
