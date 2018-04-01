@@ -15,7 +15,7 @@ public class ActivityUtils {
     private static final int MINUTES = 3;
 
     private static final String DELIMITER = ";";
-    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-d'T'HH:mm");
+    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     /**
      * Converts string line to {@link Activity}

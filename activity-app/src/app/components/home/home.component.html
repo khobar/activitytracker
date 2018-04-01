@@ -7,10 +7,15 @@
   <div class="col-sm-8 col-sm-offset-2">
     <div *ngIf="!active" class="row">
       <div class="col-sm-6">
-        <button class="btn btn-default" (click)="startActivity(Type.SM)">{{types[Type.SM]}}</button>
+        <button class="btn activity-btn" (click)="startActivity(Type.SM)">
+          <img class="activity-img" src="../../../assets/SM.png">
+          {{types[Type.SM]}}
+        </button>
       </div>
       <div class="col-sm-6">
-        <button class="btn btn-default" (click)="startActivity(Type.DEV)">{{types[Type.DEV]}}</button>
+        <button class="btn activity-btn DEV" (click)="startActivity(Type.DEV)">
+          <img class="activity-img" src="../../../assets/DEV.png">
+          {{types[Type.DEV]}}</button>
       </div>
     </div>
     <div *ngIf="active" class="row">

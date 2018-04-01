@@ -14,6 +14,8 @@ import {AlertService} from "./services/alert.service";
 import {AuthenticationService} from "./services/authentication.service";
 import {AuthInterceptor} from "./guards/auth.interceptor";
 import {ActivitiesService} from "./services/activities.service";
+import {NgHttpLoaderModule} from "ng-http-loader/ng-http-loader.module";
+
 
 
 @NgModule({
@@ -21,6 +23,7 @@ import {ActivitiesService} from "./services/activities.service";
     BrowserModule,
     FormsModule,
     HttpClientModule,
+    NgHttpLoaderModule,
     routing
   ],
   declarations: [
