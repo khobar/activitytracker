@@ -1,0 +1,16 @@
+/* You can add global styles to this file, and also import other style files */
+.activity-btn{
+  color: white;
+  background: #2c5aa0;
+}
+.activity-btn:hover{
+  color: white;
+  -webkit-opacity: .8;
+  -moz-opacity: .8;
+  opacity: .8
+}
+
+
+.activity-img {
+  height: 60px;
+}

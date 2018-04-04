@@ -1,7 +1,9 @@
 package com.qprogramming.activtytracker;
 
 import com.qprogramming.activtytracker.dto.Activity;
+import com.qprogramming.activtytracker.dto.ActivityReport;
 import com.qprogramming.activtytracker.dto.ActivityUtils;
+import com.qprogramming.activtytracker.dto.Type;
 import com.qprogramming.activtytracker.exceptions.ConfigurationException;
 import org.jvnet.hk2.annotations.Service;
 
@@ -10,24 +12,30 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static com.qprogramming.activtytracker.dto.ActivityUtils.stringifyTimes;
 import static com.qprogramming.activtytracker.utils.FileUtils.getFile;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summingLong;
 
 @Service
 public class ActivityService {
     public static final String DATABASE_FILE = "database.file";
-
+    private static final String HOURS_PER_DAY = "daily.hours";
+    private static long minutesPerDay;
     private Properties properties;
 
     @Inject
-    public ActivityService(Properties properties) {
-        this.properties = properties;
+    public ActivityService(Properties props) {
+        this.properties = props;
+        minutesPerDay = (long) properties.getOrDefault(HOURS_PER_DAY, 7L) * 60;
     }
 
     /**
@@ -37,6 +45,9 @@ public class ActivityService {
      * @return last Active task or null
      */
     public Activity getLastActive(List<Activity> activities) {
+        if (activities == null || activities.size() == 0) {
+            return null;
+        }
         Activity lastActivity = activities.get(activities.size() - 1);
         return lastActivity.getEnd() == null ? lastActivity : null;
     }
@@ -98,4 +109,44 @@ public class ActivityService {
         saveAll(activities);
         return ac;
     }
+
+    /**
+     * Creates activity report out of entry. Each entry contains list of {@link Activity} for given {@link LocalDate}
+     *
+     * @param entry entry containing List of Activities for LocalDate
+     * @return ActivityReport for LocalDate
+     */
+    public ActivityReport createActivityReport(Map.Entry<LocalDate, List<Activity>> entry) {
+        ActivityReport reportEntry = new ActivityReport(entry.getKey());
+        Map<Type, Long> minutes = entry.getValue().stream().collect(groupingBy(Activity::getType, summingLong(Activity::getMinutes)));
+        //fill to 7h
+        fillToFullDay(entry, minutes);
+        reportEntry.setMinutes(minutes);
+        Map<Type, Double> hours = minutes.entrySet().stream().collect(Collectors.toMap(
+                e -> e.getKey(),
+                e -> ActivityUtils.getHours(e.getValue())
+        ));
+//        hours.replaceAll((k, v) -> v != 0 ? v / 60 : 0);
+        reportEntry.setHours(hours);
+        return reportEntry;
+    }
+
+    /**
+     * If there were less than full day hours of activities , rest of minutes will be filled with "DEV" task
+     *
+     * @param entry   entry containing data for LocalDate
+     * @param minutes map containing previously grouped activities and it's minutes
+     */
+    private void fillToFullDay(Map.Entry<LocalDate, List<Activity>> entry, Map<Type, Long> minutes) {
+        if (entry.getKey().isBefore(LocalDate.now())) {//TODO to be replaced by scheduler ?
+            long minutesDaySum = minutes.entrySet().stream().mapToLong(Map.Entry::getValue).sum();
+            long diff = minutesPerDay - minutesDaySum;
+            if (diff > 0) {
+                Long debMinutes = minutes.getOrDefault(Type.DEV, 0L);
+                minutes.put(Type.DEV, debMinutes + diff);
+            }
+        }
+    }
+
+
 }

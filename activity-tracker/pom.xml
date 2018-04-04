@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.qprogramming.gear</groupId>
         <artifactId>gear-companion</artifactId>
-        <version>0.1</version>
+        <version>0.2</version>
     </parent>
     <artifactId>activity-tracker</artifactId>
     <packaging>jar</packaging>
@@ -24,6 +24,27 @@
             <artifactId>commons-io</artifactId>
             <version>2.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>${jersey2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${jersey2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.lukehutch</groupId>
+            <artifactId>fast-classpath-scanner</artifactId>
+            <version>2.18.1</version>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>tracker</finalName>

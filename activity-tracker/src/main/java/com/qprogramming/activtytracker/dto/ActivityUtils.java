@@ -2,6 +2,8 @@ package com.qprogramming.activtytracker.dto;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -13,7 +15,7 @@ public class ActivityUtils {
     private static final int MINUTES = 3;
 
     private static final String DELIMITER = ";";
-    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-d'T'HH:mm");
+    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     /**
      * Converts string line to {@link Activity}
@@ -64,6 +66,16 @@ public class ActivityUtils {
         }
     }
 
+    /**
+     * Returns hours based on number of minutes ( scale 2 rounded up )
+     *
+     * @param minutes minutes to be converted to hours
+     * @return how many hours
+     */
+    public static double getHours(long minutes) {
+        return minutes == 0 ? 0 : BigDecimal.valueOf(minutes / 60d).setScale(2, RoundingMode.HALF_UP).doubleValue();
+    }
+
     private static String dateToString(LocalDateTime t) {
         return t != null ? t.format(dtf) : "";
     }
@@ -78,10 +90,10 @@ public class ActivityUtils {
 
     public static void stringifyTimes(Activity ac) {
         if (ac.getStart() != null) {
-            ac.setStartTime(ac.getStart().toString());
+            ac.setStartTime(ac.getStart().format(dtf));
         }
         if (ac.getEnd() != null) {
-            ac.setEndTime(ac.getEnd().toString());
+            ac.setEndTime(ac.getEnd().format(dtf));
         }
     }
 }

@@ -9,12 +9,16 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import static com.qprogramming.activtytracker.ActivityService.DATABASE_FILE;
 import static org.junit.Assert.*;
+import static org.mockito.AdditionalAnswers.returnsSecondArg;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,12 +32,13 @@ public class ActivityServiceTest {
         propertiesMock = mock(Properties.class);
         URL resource = getClass().getResource("database");
         when(propertiesMock.getProperty(DATABASE_FILE)).thenReturn(resource.getFile());
+        when(propertiesMock.getOrDefault(anyString(), anyLong())).then(returnsSecondArg());
         activityService = new ActivityService(propertiesMock);
     }
 
 
     @Test
-    public void testLoadLastActive() throws IOException, ConfigurationException {
+    public void testLoadLastActive() {
         Activity ac1 = new Activity();
         ac1.setStart(LocalDateTime.now());
         ac1.setEnd(LocalDateTime.now().plusHours(1));
@@ -70,6 +75,14 @@ public class ActivityServiceTest {
         Activity lastActive = activityService.getLastActive(activities);
         assertNull(lastActive);
     }
+
+    @Test
+    public void testLoadLastActiveEmptyList() {
+        List<Activity> activities = new ArrayList<>();
+        Activity lastActive = activityService.getLastActive(activities);
+        assertNull(lastActive);
+    }
+
 
     @Test
     public void testAddNewActivityComplete() throws IOException, ConfigurationException {

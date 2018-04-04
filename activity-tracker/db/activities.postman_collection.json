@@ -1,0 +1,182 @@
+{
+	"id": "eb97ee5e-874a-41a8-bb80-32c917091e19",
+	"name": "activities",
+	"description": null,
+	"auth": null,
+	"events": null,
+	"variables": null,
+	"order": [
+		"395824f9-d82b-4f48-9853-215bdd6d7a3e",
+		"d89dd950-bcb7-4241-af56-9a3a42ea368a",
+		"e8f76166-3a20-49bd-9b01-52b10f4f36c6",
+		"54d1bae4-42f4-4416-b09f-c8ef899a6ae1",
+		"f9e345e9-43b2-4983-9463-af95149a8ea8"
+	],
+	"folders_order": [],
+	"folders": [],
+	"requests": [
+		{
+			"id": "395824f9-d82b-4f48-9853-215bdd6d7a3e",
+			"name": "list",
+			"url": "{{url}}/gear/activity/rest/list",
+			"description": "",
+			"data": null,
+			"dataMode": "params",
+			"headerData": [],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": {
+				"basic": [
+					{
+						"key": "password",
+						"value": "16aed67fa7837de3cd42ee310a0423cd"
+					},
+					{
+						"key": "username",
+						"value": "68392cbaab"
+					}
+				],
+				"type": "basic"
+			},
+			"events": [],
+			"folder": null,
+			"headers": "",
+			"pathVariables": {}
+		},
+		{
+			"id": "54d1bae4-42f4-4416-b09f-c8ef899a6ae1",
+			"name": "stop",
+			"url": "{{url}}/gear/activity/rest/stop",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": {
+				"type": "basic",
+				"basic": [
+					{
+						"key": "password",
+						"value": "16aed67fa7837de3cd42ee310a0423cd"
+					},
+					{
+						"key": "username",
+						"value": "68392cbaab"
+					}
+				]
+			},
+			"events": [],
+			"folder": null,
+			"rawModeData": "{}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "d89dd950-bcb7-4241-af56-9a3a42ea368a",
+			"name": "active",
+			"url": "{{url}}/gear/activity/rest/active",
+			"description": "",
+			"data": null,
+			"dataMode": "params",
+			"headerData": [],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": {
+				"type": "basic",
+				"basic": [
+					{
+						"key": "password",
+						"value": "16aed67fa7837de3cd42ee310a0423cd"
+					},
+					{
+						"key": "username",
+						"value": "68392cbaab"
+					}
+				]
+			},
+			"events": [],
+			"folder": null,
+			"headers": "",
+			"pathVariables": {}
+		},
+		{
+			"id": "e8f76166-3a20-49bd-9b01-52b10f4f36c6",
+			"name": "start",
+			"url": "{{url}}/gear/activity/rest/start",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": {
+				"type": "basic",
+				"basic": [
+					{
+						"key": "password",
+						"value": "16aed67fa7837de3cd42ee310a0423cd"
+					},
+					{
+						"key": "username",
+						"value": "68392cbaab"
+					}
+				]
+			},
+			"events": [],
+			"folder": null,
+			"rawModeData": "{}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "f9e345e9-43b2-4983-9463-af95149a8ea8",
+			"name": "add",
+			"url": "{{url}}/gear/activity/rest/add",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": {
+				"type": "basic",
+				"basic": [
+					{
+						"key": "password",
+						"value": "16aed67fa7837de3cd42ee310a0423cd"
+					},
+					{
+						"key": "username",
+						"value": "68392cbaab"
+					}
+				]
+			},
+			"events": [],
+			"folder": null,
+			"rawModeData": "{\n        \"startTime\": \"2018-03-18T22:00\",\n        \"minutes\": 35,\n        \"type\": \"SM\"\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		}
+	]
+}

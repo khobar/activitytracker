@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="col-sm-2 col-sm-offset-10">
+    <a [routerLink]="['/login']">Logout</a>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div *ngIf="!active" class="row">
+      <div class="col-sm-6">
+        <button class="btn activity-btn" (click)="startActivity(Type.SM)">
+          <img class="activity-img" src="assets/SM.png">
+          {{types[Type.SM]}}
+        </button>
+      </div>
+      <div class="col-sm-6">
+        <button class="btn activity-btn DEV" (click)="startActivity(Type.DEV)">
+          <img class="activity-img" src="assets/DEV.png">
+          {{types[Type.DEV]}}</button>
+      </div>
+    </div>
+    <div *ngIf="active" class="row">
+      <p>Active Task:</p>
+      <p>Start time: {{active.startTime}}</p>
+      <p>Minutes: {{active.minutes}}</p>
+      <p>Type:{{types[active.type]}}</p>
+      <p>
+        <button class="btn btn-default" (click)="stopActive()">Stop Activity</button>
+      </p>
+    </div>
+  </div>
+</div>
