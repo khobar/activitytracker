@@ -3,6 +3,8 @@ import {Activity} from "../../models/activity";
 import {ActivitiesService} from "../../services/activities.service";
 import {AlertService} from "../../services/alert.service";
 import {Type} from "../../models/type";
+import {Router} from "@angular/router";
+import {DateFormatter} from "@angular/common/src/pipes/deprecated/intl";
 
 @Component({
   selector: 'app-home',
@@ -12,14 +14,15 @@ export class HomeComponent implements OnInit {
 
   activities: Activity[];
   active: Activity;
-  loading = false;
   types = {
     SM: "Scrum Master",
     DEV: "Developer"
   };
   Type = Type;
 
-  constructor(private activitiesService: ActivitiesService, private alertService: AlertService) {
+  constructor(private router: Router,
+              private activitiesService: ActivitiesService,
+              private alertService: AlertService) {
   }
 
   ngOnInit() {
@@ -32,51 +35,56 @@ export class HomeComponent implements OnInit {
   }
 
   getActive() {
-    this.loading = false;
     this.activitiesService.active().subscribe(result => {
       this.active = result;
-      this.loading = false;
+      this.active.time = new Date(this.active.startTime);
+      console.log(new Date(this.active.startTime));
     }, error => {
       this.alertService.error("Error while fetching active task");
       console.error(error);
-      this.loading = false;
     })
     ;
   }
 
   stopActive() {
     this.activitiesService.stop().subscribe(result => {
-      this.alertService.success(`+ ${result.minutes} ${Type[result.type]}`);
-      this.refresh()
+      this.alertService.success(`+ ${result.minutes} ${Type[result.type]}`, true);
+      this.reloadPage()
     }, error => {
       this.alertService.error("Error while stoping activity");
       console.error(error);
-      this.loading = false;
     })
 
   }
 
   getActivities() {
-    this.loading = true;
     console.log("Getting activities");
     this.activitiesService.list().subscribe(result => {
       this.activities = result;
-      this.loading = false;
     }, error => {
       this.alertService.error("Error while fetching list of activities");
       console.error(error);
-      this.loading = false;
     })
   }
 
   startActivity(type: Type) {
     this.activitiesService.start(type).subscribe(result => {
       this.active = result;
-      this.loading = false;
     }, error => {
       this.alertService.error("Error while starting activity");
       console.error(error);
-      this.loading = false;
     })
+  }
+
+  reloadPage() {
+    this.router.routeReuseStrategy.shouldReuseRoute = function () {
+      return false;
+    };
+    let currentUrl = this.router.url + '?';
+    this.router.navigateByUrl(currentUrl)
+      .then(() => {
+        this.router.navigated = false;
+        this.router.navigate([this.router.url]);
+      });
   }
 }

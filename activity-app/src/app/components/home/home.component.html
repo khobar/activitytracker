@@ -1,31 +1,43 @@
-<div class="row">
-  <div class="col-sm-2 col-sm-offset-10">
-    <a [routerLink]="['/login']">Logout</a>
+<div class="row justify-content-end">
+  <div class="col-1">
+    <button class="btn btn-danger waves-light" [routerLink]="['/login']">Logout</button>
   </div>
 </div>
-<div class="row">
-  <div class="col-sm-8 col-sm-offset-2">
-    <div *ngIf="!active" class="row">
-      <div class="col-sm-6">
-        <button class="btn activity-btn" (click)="startActivity(Type.SM)">
-          <img class="activity-img" src="assets/SM.png">
-          {{types[Type.SM]}}
-        </button>
-      </div>
-      <div class="col-sm-6">
-        <button class="btn activity-btn DEV" (click)="startActivity(Type.DEV)">
-          <img class="activity-img" src="assets/DEV.png">
-          {{types[Type.DEV]}}</button>
-      </div>
+
+<div *ngIf="!active">
+  <div class="row justify-content-center">
+    <div class="col-4">
+      <button class="btn activity-btn" (click)="startActivity(Type.SM)">
+        <img class="activity-img" src="assets/SM.png">
+        {{types[Type.SM]}}
+      </button>
     </div>
-    <div *ngIf="active" class="row">
-      <p>Active Task:</p>
-      <p>Start time: {{active.startTime}}</p>
-      <p>Minutes: {{active.minutes}}</p>
-      <p>Type:{{types[active.type]}}</p>
-      <p>
-        <button class="btn btn-default" (click)="stopActive()">Stop Activity</button>
-      </p>
+    <div class="col-4">
+      <button class="btn activity-btn DEV pull-right" (click)="startActivity(Type.DEV)">
+        <img class="activity-img" src="assets/DEV.png">
+        {{types[Type.DEV]}}
+      </button>
     </div>
   </div>
+  <div class="row justify-content-center">
+    <div class="col-4"></div>
+  </div>
+</div>
+<div *ngIf="active">
+  <div class="row justify-content-center">
+    <div class="col-4 text-center">
+      <p>Started {{active.time | date:'dd-MM-yyyy HH:mm'}}</p>
+      <p class="minutes">{{active.minutes}} m</p>
+      <img class="active" [src]="'assets/'+active.type+'.png'">
+      <p><strong>{{types[active.type]}}</strong></p>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-2">
+      <button class="btn btn-success waves-light" (click)="stopActive()">Stop Activity</button>
+    </div>
+  </div>
+</div>
+<div>
+  <app-chart></app-chart>
 </div>

@@ -16,4 +16,7 @@ export class AlertComponent implements OnInit {
       this.message = message;
     });
   }
+  dismiss(){
+    this.alertService.dissmiss();
+  }
 }

@@ -1,10 +1,10 @@
 package com.qprogramming.activtytracker;
 
 import com.qprogramming.activtytracker.dto.Activity;
-import com.qprogramming.activtytracker.dto.ActivityReport;
 import com.qprogramming.activtytracker.dto.ActivityUtils;
 import com.qprogramming.activtytracker.dto.Type;
 import com.qprogramming.activtytracker.exceptions.ConfigurationException;
+import com.qprogramming.activtytracker.report.dto.ActivityReport;
 import com.qprogramming.activtytracker.user.UserService;
 import com.qprogramming.activtytracker.user.dto.User;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -136,7 +137,11 @@ public class ActivityController {
         List<Activity> activities = activityService.loadAll();
         Map<LocalDate, List<Activity>> grouped = activities
                 .stream()
-                .collect(groupingBy(activity -> activity.getStart().toLocalDate(), Collectors.toList()));
+                .collect(groupingBy(activity -> activity.getStart().toLocalDate(), Collectors.toList()))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
         List<ActivityReport> activityReports = grouped.entrySet()
                 .stream()
                 .map(activityService::createActivityReport)

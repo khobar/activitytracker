@@ -4,7 +4,7 @@
     <groupId>com.qprogramming.gear</groupId>
     <artifactId>gear-companion</artifactId>
     <packaging>pom</packaging>
-    <version>0.2</version>
+    <version>0.3-SNAPSHOT</version>
     <modules>
         <module>activity-tracker</module>
         <module>activity-app</module>

@@ -1,6 +1,7 @@
-package com.qprogramming.activtytracker.dto;
+package com.qprogramming.activtytracker.report.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.qprogramming.activtytracker.dto.Type;
 
 import java.time.LocalDate;
 import java.util.Map;

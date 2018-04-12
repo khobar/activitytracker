@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Router, NavigationStart} from '@angular/router';
+import {NavigationStart, Router} from '@angular/router';
 import {Observable} from 'rxjs';
 import {Subject} from 'rxjs/Subject';
 
@@ -36,5 +36,9 @@ export class AlertService {
 
   getMessage(): Observable<any> {
     return this.subject.asObservable();
+  }
+
+  dissmiss() {
+    this.subject.next();
   }
 }

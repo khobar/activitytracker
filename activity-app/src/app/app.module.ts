@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
 
 
 import {AppComponent} from './app.component';
@@ -15,8 +15,8 @@ import {AuthenticationService} from "./services/authentication.service";
 import {AuthInterceptor} from "./guards/auth.interceptor";
 import {ActivitiesService} from "./services/activities.service";
 import {NgHttpLoaderModule} from "ng-http-loader/ng-http-loader.module";
-
-
+import {ChartComponent} from './components/chart/chart.component';
+import {MDBBootstrapModule} from 'angular-bootstrap-md';
 
 @NgModule({
   imports: [
@@ -24,13 +24,15 @@ import {NgHttpLoaderModule} from "ng-http-loader/ng-http-loader.module";
     FormsModule,
     HttpClientModule,
     NgHttpLoaderModule,
+    MDBBootstrapModule.forRoot(),
     routing
   ],
   declarations: [
     AppComponent,
     LoginComponent,
     AlertComponent,
-    HomeComponent
+    HomeComponent,
+    ChartComponent
   ],
   providers: [
     AuthGuard,
@@ -42,7 +44,8 @@ import {NgHttpLoaderModule} from "ng-http-loader/ng-http-loader.module";
       useClass: AuthInterceptor,
       multi: true
     }],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [NO_ERRORS_SCHEMA]
 })
 export class AppModule {
 }
