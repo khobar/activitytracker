@@ -7,13 +7,13 @@
 <div *ngIf="!active">
   <div class="row justify-content-center">
     <div class="col-4">
-      <button class="btn activity-btn" (click)="startActivity(Type.SM)">
+      <button class="btn activity-btn clickable" (click)="startActivity(Type.SM)">
         <img class="activity-img" src="assets/SM.png">
         {{types[Type.SM]}}
       </button>
     </div>
     <div class="col-4">
-      <button class="btn activity-btn DEV pull-right" (click)="startActivity(Type.DEV)">
+      <button class="btn activity-btn DEV pull-right clickable" (click)="startActivity(Type.DEV)">
         <img class="activity-img" src="assets/DEV.png">
         {{types[Type.DEV]}}
       </button>

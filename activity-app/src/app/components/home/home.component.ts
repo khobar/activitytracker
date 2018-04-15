@@ -4,7 +4,6 @@ import {ActivitiesService} from "../../services/activities.service";
 import {AlertService} from "../../services/alert.service";
 import {Type} from "../../models/type";
 import {Router} from "@angular/router";
-import {DateFormatter} from "@angular/common/src/pipes/deprecated/intl";
 
 @Component({
   selector: 'app-home',
@@ -36,9 +35,10 @@ export class HomeComponent implements OnInit {
 
   getActive() {
     this.activitiesService.active().subscribe(result => {
-      this.active = result;
-      this.active.time = new Date(this.active.startTime);
-      console.log(new Date(this.active.startTime));
+      if (result) {
+        this.active = result;
+        this.active.time = new Date(this.active.startTime);
+      }
     }, error => {
       this.alertService.error("Error while fetching active task");
       console.error(error);

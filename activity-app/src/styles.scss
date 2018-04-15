@@ -22,10 +22,17 @@
   filter: invert(1);
 }
 
+.centered{
+  margin: 0 auto;
+}
+
 .activity-img {
   height: 60px;
 }
 
 .clickable {
   cursor: pointer;
+}
+.margin-top20{
+  margin-top: 20px;
 }

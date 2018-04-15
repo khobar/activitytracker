@@ -14,10 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.qprogramming.activtytracker.dto.ActivityUtils.stringifyTimes;
@@ -67,6 +64,26 @@ public class ActivityService {
                 .map(ActivityUtils::fromLine)
                 .sorted(Comparator.comparing(Activity::getStart))
                 .collect(Collectors.toList());
+    }
+
+
+    public List<ActivityReport> getActivityReports(Map<LocalDate, List<Activity>> grouped) {
+        return grouped.entrySet()
+                .stream()
+                .map(this::createActivityReport)
+                .collect(Collectors.toList());
+    }
+
+    //TODO add tests
+    public Map<LocalDate, List<Activity>> loadDateGroupedActivities() throws IOException, ConfigurationException {
+        List<Activity> activities = loadAll();
+        return activities
+                .stream()
+                .collect(groupingBy(activity -> activity.getStart().toLocalDate(), Collectors.toList()))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
     /**
@@ -120,7 +137,7 @@ public class ActivityService {
         ActivityReport reportEntry = new ActivityReport(entry.getKey());
         Map<Type, Long> minutes = entry.getValue().stream().collect(groupingBy(Activity::getType, summingLong(Activity::getMinutes)));
         //fill to 7h
-        fillToFullDay(entry, minutes);
+        fillToFullDay(entry.getKey(), minutes);
         reportEntry.setMinutes(minutes);
         Map<Type, Double> hours = minutes.entrySet().stream().collect(Collectors.toMap(
                 e -> e.getKey(),
@@ -134,11 +151,11 @@ public class ActivityService {
     /**
      * If there were less than full day hours of activities , rest of minutes will be filled with "DEV" task
      *
-     * @param entry   entry containing data for LocalDate
+     * @param date    data for LocalDate
      * @param minutes map containing previously grouped activities and it's minutes
      */
-    private void fillToFullDay(Map.Entry<LocalDate, List<Activity>> entry, Map<Type, Long> minutes) {
-        if (entry.getKey().isBefore(LocalDate.now())) {//TODO to be replaced by scheduler ?
+    public void fillToFullDay(LocalDate date, Map<Type, Long> minutes) {
+        if (date.isBefore(LocalDate.now())) {//TODO to be replaced by scheduler ?
             long minutesDaySum = minutes.entrySet().stream().mapToLong(Map.Entry::getValue).sum();
             long diff = minutesPerDay - minutesDaySum;
             if (diff > 0) {

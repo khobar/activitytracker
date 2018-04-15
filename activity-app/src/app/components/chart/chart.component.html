@@ -1,11 +1,31 @@
-<div style="display: block">
-  <canvas mdbChart
-          [chartType]="chartType"
-          [datasets]="chartDatasets"
-          [labels]="chartLabels"
-          [options]="chartOptions"
-          [legend]="true"
-          (chartHover)="chartHovered($event)"
-          (chartClick)="chartClicked($event)">
-  </canvas>
+<div class="row justify-content-center margin-top20">
+  <div class="col flex-center">
+    <h3>Developer/Scrum Master distribution</h3>
+  </div>
+</div>
+<div class="row justify-content-center margin-top20">
+  <div class="col">
+    <canvas mdbChart class="centered"
+            [chartType]="reportChartType"
+            [datasets]="reportDatasets"
+            [labels]="reportChartLabels"
+            [options]="reportOptions"
+            [colors]="reportColors"
+            [legend]="true"
+            (chartHover)="chartHovered($event)"
+            (chartClick)="chartClicked($event)">
+    </canvas>
+  </div>
+  <div class="col">
+    <canvas mdbChart class="centered"
+            [chartType]="distChartType"
+            [data]="distDatasets"
+            [labels]="distChartLabels"
+            [colors]="distChartColors"
+            [options]="distOptions"
+            [legend]="true"
+            (chartHover)="chartHovered($event)"
+            (chartClick)="chartClicked($event)">
+    </canvas>
+  </div>
 </div>

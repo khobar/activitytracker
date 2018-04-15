@@ -3,6 +3,7 @@ package com.qprogramming.activtytracker;
 import com.qprogramming.activtytracker.filter.AuthenticationFilter;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.jvnet.hk2.annotations.Service;
 
