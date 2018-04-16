@@ -17,6 +17,9 @@ import {ActivitiesService} from "./services/activities.service";
 import {NgHttpLoaderModule} from "ng-http-loader/ng-http-loader.module";
 import {ChartComponent} from './components/chart/chart.component';
 import {MDBBootstrapModule} from 'angular-bootstrap-md';
+import {NgDatepickerModule} from "ng2-datepicker";
+import {DatePipe} from "@angular/common";
+
 
 @NgModule({
   imports: [
@@ -25,7 +28,8 @@ import {MDBBootstrapModule} from 'angular-bootstrap-md';
     HttpClientModule,
     NgHttpLoaderModule,
     MDBBootstrapModule.forRoot(),
-    routing
+    NgDatepickerModule,
+    routing,
   ],
   declarations: [
     AppComponent,
@@ -43,7 +47,8 @@ import {MDBBootstrapModule} from 'angular-bootstrap-md';
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }],
+    },
+    DatePipe],
   bootstrap: [AppComponent],
   schemas: [NO_ERRORS_SCHEMA]
 })

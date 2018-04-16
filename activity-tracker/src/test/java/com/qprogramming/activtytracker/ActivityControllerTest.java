@@ -141,7 +141,7 @@ public class ActivityControllerTest {
         doReturn(activities).when(activityService).loadAll();
         doCallRealMethod().when(activityService).loadDateGroupedActivities();
         doCallRealMethod().when(activityService).createActivityReport(any());
-        Response dailyReport = ctr.getDailyReport();
+        Response dailyReport = ctr.getDailyReport(null);
         List<ActivityReport> activityReports = (List<ActivityReport>) dailyReport.getEntity();
         Optional<ActivityReport> prevActivity = activityReports.stream().filter(activityReport -> activityReport.getLocaldate().equals(LocalDate.now().minusDays(1))).findFirst();
         assertTrue(activityReports.size() > 0);

@@ -135,12 +135,15 @@ public class ActivityController {
         return Response.ok(lastActive).build();
     }
 
-    @GET
+    @POST
     @Path("/report")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("USER")
-    public Response getDailyReport() throws ConfigurationException, IOException {
+    public Response getDailyReport(Range range) throws ConfigurationException, IOException {
         Map<LocalDate, List<Activity>> grouped = activityService.loadDateGroupedActivities();
+        if (range != null) {
+            grouped = grouped.entrySet().stream().filter(isInRange(range)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
         List<ActivityReport> activityReports = activityService.getActivityReports(grouped);
         return Response.ok(activityReports).build();
     }

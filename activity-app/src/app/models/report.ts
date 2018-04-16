@@ -8,3 +8,8 @@ export class DEVSM {
   DEV: number;
   SM: number;
 }
+
+export class Range {
+  from: string;
+  to: string;
+}

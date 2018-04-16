@@ -4,6 +4,14 @@
   </div>
 </div>
 <div class="row justify-content-center margin-top20">
+  <div class="col flex-center">
+    <label for="from">From: </label>
+    <ng-datepicker id="from" [(ngModel)]="fromDate" [options]="dateOptions" (ngModelChange)="reload()"></ng-datepicker>
+    <label for="to">To: </label>
+    <ng-datepicker id="to" [(ngModel)]="toDate" [options]="dateOptions" (ngModelChange)="reload()"></ng-datepicker>
+  </div>
+</div>
+<div class="row justify-content-center margin-top20">
   <div class="col">
     <canvas mdbChart class="centered"
             [chartType]="reportChartType"

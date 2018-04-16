@@ -1,19 +1,27 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ActivitiesService} from "../../services/activities.service";
 import {Type} from "../../models/type";
+import {DatepickerOptions} from "ng2-datepicker";
+import * as plLocale from 'date-fns/locale/pl';
+import {DatePipe} from "@angular/common";
+import {Range} from "../../models/report";
 
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html'
 })
-export class ChartComponent implements OnInit {
+export class ChartComponent implements OnInit, OnChanges {
 
   types = {
     SM: "Scrum Master",
     DEV: "Developer"
   };
 
+  toDate: Date;
+  fromDate: Date;
+  range: Range;
 
+//TODO move chart options to ohter file?
   public reportChartType: string = 'line';
   public reportDatasets: Array<any> = [{data: [0], label: ''}];
   public reportChartLabels: Array<any> = [''];
@@ -61,6 +69,17 @@ export class ChartComponent implements OnInit {
     responsive: false
   };
 
+  // Range options
+  dateOptions: DatepickerOptions = {
+    minYear: 2018,
+    displayFormat: 'DD.MM.YYYY',
+    barTitleFormat: 'MMMM YYYY',
+    dayNamesFormat: 'dd',
+    firstCalendarDay: 1, // 0 - Sunday, 1 - Monday
+    locale: plLocale,
+    maxDate: new Date(Date.now()),  // Maximal selectable date
+  };
+
   public chartClicked(e: any): void {
 
   }
@@ -70,7 +89,10 @@ export class ChartComponent implements OnInit {
   }
 
 
-  constructor(private activitiesService: ActivitiesService) {
+  constructor(private activitiesService: ActivitiesService, public datepipe: DatePipe) {
+    this.toDate = new Date();
+    this.fromDate = this.getFromInitDate();
+    this.range = this.createRange();
   }
 
   ngOnInit() {
@@ -78,9 +100,21 @@ export class ChartComponent implements OnInit {
     this.getDistribution();
   }
 
+  reload() {
+    this.range = this.createRange();
+    this.getReport();
+    this.getDistribution();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.range = this.createRange();
+    this.getReport();
+    this.getDistribution();
+  }
+
   private getDistribution() {
     let data = [];
-    this.activitiesService.distribution().subscribe(dist => {
+    this.activitiesService.distribution(this.range).subscribe(dist => {
       this.distDatasets.pop();
       data.push(dist.DEV);
       data.push(dist.SM);
@@ -93,7 +127,8 @@ export class ChartComponent implements OnInit {
     let dev = [];
     let sm = [];
     let labels = [];
-    this.activitiesService.report().subscribe(reports => {
+    this.activitiesService.report(this.range).subscribe(reports => {
+      this.reportDatasets.pop();
       this.reportDatasets.pop();
       reports.forEach(report => {
         labels.push(report.date);
@@ -113,5 +148,22 @@ export class ChartComponent implements OnInit {
       this.reportChartLabels = labels;
       console.log(this.reportDatasets);
     });
+  }
+
+  test() {
+    console.log(this.range);
+  }
+
+  private getFromInitDate(): Date {
+    let date = new Date();
+    date.setDate(date.getDate() - 7);
+    return date;
+  }
+
+  private createRange(): Range {
+    let range = new Range();
+    range.from = this.datepipe.transform(this.fromDate, 'yyyy-MM-dd');
+    range.to = this.datepipe.transform(this.toDate, 'yyyy-MM-dd');
+    return range;
   }
 }
