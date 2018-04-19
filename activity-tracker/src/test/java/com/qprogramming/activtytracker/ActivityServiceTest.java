@@ -3,11 +3,13 @@ package com.qprogramming.activtytracker;
 import com.qprogramming.activtytracker.dto.Activity;
 import com.qprogramming.activtytracker.dto.Type;
 import com.qprogramming.activtytracker.exceptions.ConfigurationException;
+import com.qprogramming.activtytracker.report.dto.Range;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,6 +93,15 @@ public class ActivityServiceTest {
         ac.setStart(LocalDateTime.now());
         Activity activity = activityService.addNewActivity(ac, true);
         assertNotNull(activity.getStartTime());
+    }
+
+    @Test
+    public void testLoadInrange() throws IOException, ConfigurationException {
+        Range range = new Range();
+        range.setFromDate(LocalDate.now().minusDays(2));
+        range.setToDate(LocalDate.now().minusDays(1));
+        List<Activity> activities = activityService.loadAllInRange(range);
+        assertTrue("All activities in test resource file should be older than today - 1", activities.isEmpty());
     }
 
 }

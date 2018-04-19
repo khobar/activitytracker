@@ -5,17 +5,24 @@ import com.qprogramming.activtytracker.dto.ActivityUtils;
 import com.qprogramming.activtytracker.dto.Type;
 import com.qprogramming.activtytracker.exceptions.ConfigurationException;
 import com.qprogramming.activtytracker.report.dto.ActivityReport;
+import com.qprogramming.activtytracker.report.dto.Range;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.qprogramming.activtytracker.dto.ActivityUtils.stringifyTimes;
 import static com.qprogramming.activtytracker.utils.FileUtils.getFile;
@@ -74,16 +81,46 @@ public class ActivityService {
                 .collect(Collectors.toList());
     }
 
-    //TODO add tests
-    public Map<LocalDate, List<Activity>> loadDateGroupedActivities() throws IOException, ConfigurationException {
-        List<Activity> activities = loadAll();
-        return activities
-                .stream()
-                .collect(groupingBy(activity -> activity.getStart().toLocalDate(), Collectors.toList()))
-                .entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+    public List<Activity> loadAllInRange(Range range) throws IOException, ConfigurationException {
+        return this.loadAll().stream().filter(isInRange(range)).sorted(Comparator.comparing(Activity::getStart)).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
+     * Load All activities grouped per start date in certain {@link Range}
+     *
+     * @param range range FROM-TO
+     * @return LinkedHashMap with grouped all activities from to
+     */
+    public Map<LocalDate, List<Activity>> loadDateGroupedActivitiesInRange(Range range) throws IOException, ConfigurationException {
+        if (range == null) {
+            range = new Range();
+        }
+        Map<LocalDate, List<Activity>> result = new LinkedHashMap<>();
+        List<Activity> activities = this.loadAllInRange(range);
+        LocalDate start = range.getFrom();
+        if (start == null) {
+            start = activities.get(0).getStart().toLocalDate();
+        }
+        long days = start.until(range.getTo(), ChronoUnit.DAYS) + 1;
+        List<LocalDate> allDates = Stream.iterate(start, d -> d.plusDays(1)).limit(days).filter(notWeekend()).collect(Collectors.toList());
+        Map<LocalDate, List<Activity>> collect = activities.stream().collect(groupingBy(activity -> activity.getStart().toLocalDate(), Collectors.toList()));
+        allDates.forEach(date -> result.put(date, collect.getOrDefault(date, Collections.singletonList(emtpyDevActivity(date)))));
+        return result;
+    }
+
+    /**
+     * Creates empty DEV activity at certain date at 8 am
+     *
+     * @param date date of activity
+     * @return new Activity()
+     */
+    private Activity emtpyDevActivity(LocalDate date) {
+        Activity activity = new Activity();
+        activity.setType(Type.DEV);
+        activity.setStart(date.atTime(8, 0));
+        activity.setEnd(date.atTime(8, 0));
+        activity.setMinutes(0);
+        return activity;
     }
 
     /**
@@ -140,13 +177,37 @@ public class ActivityService {
         fillToFullDay(entry.getKey(), minutes);
         reportEntry.setMinutes(minutes);
         Map<Type, Double> hours = minutes.entrySet().stream().collect(Collectors.toMap(
-                e -> e.getKey(),
+                Map.Entry::getKey,
                 e -> ActivityUtils.getHours(e.getValue())
         ));
-//        hours.replaceAll((k, v) -> v != 0 ? v / 60 : 0);
         reportEntry.setHours(hours);
         return reportEntry;
     }
+
+    /**
+     * Returns distribution of task in given range
+     *
+     * @param range Range from - to
+     * @return Map of Type - Minutes total in range
+     */
+    public Map<Type, Long> getDistributionInRange(Range range) throws IOException, ConfigurationException {
+        Map<Type, Long> distribution = new HashMap<>();
+        Arrays.stream(Type.values()).forEach(type -> distribution.put(type, 0L));
+        Map<LocalDate, List<Activity>> grouped = this.loadDateGroupedActivitiesInRange(range);
+        grouped.forEach((key, value) -> {
+            Map<Type, Long> minutes = value.stream().collect(groupingBy(Activity::getType, summingLong(Activity::getMinutes)));
+            this.fillToFullDay(key, minutes);
+            minutes.forEach((type, aLong) -> {
+                Long typeValue = distribution.get(type);
+                distribution.put(type, typeValue + aLong);
+            });
+        });
+        double total = distribution.values().stream().mapToDouble(p -> p).sum();
+        Map<Type, Long> result = new HashMap<>();
+        distribution.forEach((type, aLong) -> result.put(type, getPercentage(total, aLong)));
+        return result;
+    }
+
 
     /**
      * If there were less than full day hours of activities , rest of minutes will be filled with "DEV" task
@@ -165,5 +226,26 @@ public class ActivityService {
         }
     }
 
+    /**
+     * Filter entries based on pased range
+     *
+     * @param range Range with from-to LocalDates
+     * @return predicate with result
+     */
+    private Predicate<Activity> isInRange(Range range) {
+        if (range.getFrom() == null) {
+            return p -> !p.getStart().toLocalDate().isAfter(range.getTo());
+        } else {
+            return p -> !p.getStart().toLocalDate().isBefore(range.getFrom()) && !p.getStart().toLocalDate().isAfter(range.getTo());
+        }
+    }
+
+    private Predicate<LocalDate> notWeekend() {
+        return d -> d.getDayOfWeek() != DayOfWeek.SATURDAY && d.getDayOfWeek() != DayOfWeek.SUNDAY;
+    }
+
+    private Long getPercentage(double total, Long aLong) {
+        return aLong > 0 ? BigDecimal.valueOf((aLong / total) * 100).setScale(0, RoundingMode.HALF_UP).longValue() : 0L;
+    }
 
 }

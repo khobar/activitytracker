@@ -24,21 +24,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.qprogramming.activtytracker.dto.ActivityUtils.stringifyTimes;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.summingLong;
 
 @Singleton
 @Path("/")
@@ -140,10 +132,7 @@ public class ActivityController {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("USER")
     public Response getDailyReport(Range range) throws ConfigurationException, IOException {
-        Map<LocalDate, List<Activity>> grouped = activityService.loadDateGroupedActivities();
-        if (range != null) {
-            grouped = grouped.entrySet().stream().filter(isInRange(range)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        }
+        Map<LocalDate, List<Activity>> grouped = activityService.loadDateGroupedActivitiesInRange(range);
         List<ActivityReport> activityReports = activityService.getActivityReports(grouped);
         return Response.ok(activityReports).build();
     }
@@ -154,28 +143,8 @@ public class ActivityController {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("USER")
     public Response getDistribution(Range range) throws ConfigurationException, IOException {
-        Map<Type, Long> distribution = new HashMap<>();
-        Arrays.stream(Type.values()).forEach(type -> distribution.put(type, 0L));
-        Map<LocalDate, List<Activity>> grouped = activityService.loadDateGroupedActivities();
-        if (range != null) {
-            grouped = grouped.entrySet().stream().filter(isInRange(range)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        }
-        grouped.forEach((key, value) -> {
-            Map<Type, Long> minutes = value.stream().collect(groupingBy(Activity::getType, summingLong(Activity::getMinutes)));
-            activityService.fillToFullDay(key, minutes);
-            minutes.forEach((type, aLong) -> {
-                Long typeValue = distribution.get(type);
-                distribution.put(type, typeValue + aLong);
-            });
-        });
-        double total = distribution.values().stream().mapToDouble(p -> p).sum();
-        Map<Type, Long> result = new HashMap<>();
-        distribution.forEach((type, aLong) -> result.put(type, getPercentage(total, aLong)));
+        Map<Type, Long> result = activityService.getDistributionInRange(range);
         return Response.ok(result).build();
-    }
-
-    private Long getPercentage(double total, Long aLong) {
-        return aLong > 0 ? BigDecimal.valueOf((aLong / total) * 100).setScale(0, RoundingMode.HALF_UP).longValue() : 0L;
     }
 
 
@@ -189,19 +158,5 @@ public class ActivityController {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         return Response.ok(dbUser).build();
-    }
-
-    /**
-     * Filter entries based on pased range
-     *
-     * @param range Range with from-to LocalDates
-     * @return predicate with result
-     */
-    private Predicate<Map.Entry<LocalDate, List<Activity>>> isInRange(Range range) {
-        if (range.getFrom() == null) {
-            return p -> !p.getKey().isAfter(range.getTo());
-        } else {
-            return p -> !p.getKey().isBefore(range.getFrom()) && !p.getKey().isAfter(range.getTo());
-        }
     }
 }

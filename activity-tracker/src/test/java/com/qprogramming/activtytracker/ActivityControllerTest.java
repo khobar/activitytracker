@@ -139,7 +139,7 @@ public class ActivityControllerTest {
         activity.setMinutes(80);
         activities.add(activity);
         doReturn(activities).when(activityService).loadAll();
-        doCallRealMethod().when(activityService).loadDateGroupedActivities();
+        doCallRealMethod().when(activityService).loadDateGroupedActivitiesInRange(any(Range.class));
         doCallRealMethod().when(activityService).createActivityReport(any());
         Response dailyReport = ctr.getDailyReport(null);
         List<ActivityReport> activityReports = (List<ActivityReport>) dailyReport.getEntity();
@@ -182,7 +182,7 @@ public class ActivityControllerTest {
         activity.setMinutes(80);
         activities.add(activity);
         doReturn(activities).when(activityService).loadAll();
-        doCallRealMethod().when(activityService).loadDateGroupedActivities();
+        doCallRealMethod().when(activityService).loadDateGroupedActivitiesInRange(any(Range.class));
         doCallRealMethod().when(activityService).createActivityReport(any());
         doCallRealMethod().when(activityService).fillToFullDay(any(), any());
         Response distribution = ctr.getDistribution(null);
@@ -196,19 +196,19 @@ public class ActivityControllerTest {
     public void testDistributionInRange() throws IOException, ConfigurationException {
         ArrayList<Activity> activities = createActivities();
         Activity activity = new Activity();
-        activity.setStart(LocalDateTime.now().minusDays(1));
+        activity.setStart(LocalDateTime.now().minusDays(2));
         activity.setType(Type.SM);
         activity.setMinutes(80);
         activities.add(activity);
         doReturn(activities).when(activityService).loadAll();
-        doCallRealMethod().when(activityService).loadDateGroupedActivities();
+        doCallRealMethod().when(activityService).loadDateGroupedActivitiesInRange(any(Range.class));
         doCallRealMethod().when(activityService).createActivityReport(any());
         doCallRealMethod().when(activityService).fillToFullDay(any(), any());
         Range range = new Range();
-        range.setFromDate(LocalDate.now());
+        range.setFromDate(LocalDate.now().minusDays(2));
         Response distribution = ctr.getDistribution(range);
         Map<Type, Long> distributionMap = (Map<Type, Long>) distribution.getEntity();
-        assertEquals(100L, (long) distributionMap.get(Type.SM));
+        assertEquals(16L, (long) distributionMap.get(Type.SM));
     }
 
 }

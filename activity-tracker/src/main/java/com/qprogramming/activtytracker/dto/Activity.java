@@ -14,6 +14,13 @@ public class Activity {
     private long minutes;
     private Type type;
 
+    public Activity() {
+    }
+
+    public Activity(Type type) {
+        this.type = type;
+    }
+
     public LocalDateTime getStart() {
         return start;
     }
@@ -90,5 +97,14 @@ public class Activity {
         result = 31 * result + (end != null ? end.hashCode() : 0);
         result = 31 * result + type.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Activity{" +
+                "type=" + type +
+                ", startTime='" + start + '\'' +
+                ", endTime='" + end + '\'' +
+                '}';
     }
 }
