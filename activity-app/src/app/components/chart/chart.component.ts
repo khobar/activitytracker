@@ -1,22 +1,22 @@
-import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivitiesService} from "../../services/activities.service";
 import {Type} from "../../models/type";
-import {DatepickerOptions} from "ng2-datepicker";
-import * as plLocale from 'date-fns/locale/pl';
 import {DatePipe} from "@angular/common";
-import {Range} from "../../models/report";
+import {DateRange, Range} from "../../models/report";
+import {IMyDateRangeModel, IMyDrpOptions} from "mydaterangepicker";
 
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html'
 })
-export class ChartComponent implements OnInit, OnChanges {
+export class ChartComponent implements OnInit {
 
   types = {
     SM: "Scrum Master",
     DEV: "Developer"
   };
 
+  dateRange: DateRange = this.createDataRange();
   toDate: Date;
   fromDate: Date;
   range: Range;
@@ -70,14 +70,16 @@ export class ChartComponent implements OnInit, OnChanges {
   };
 
   // Range options
-  dateOptions: DatepickerOptions = {
+  myDateRangePickerOptions: IMyDrpOptions = {
+    // other options...
+    showClearBtn: false,
+    showApplyBtn: false,
+    dateFormat: 'dd.mm.yyyy',
     minYear: 2018,
-    displayFormat: 'DD.MM.YYYY',
-    barTitleFormat: 'MMMM YYYY',
-    dayNamesFormat: 'dd',
-    firstCalendarDay: 1, // 0 - Sunday, 1 - Monday
-    locale: plLocale,
-    maxDate: new Date(Date.now()),  // Maximal selectable date
+    showClearDateRangeBtn: false,
+    editableDateRangeField: false,
+    openSelectorOnInputClick: true,
+    height: "45px"
   };
 
   public chartClicked(e: any): void {
@@ -87,7 +89,6 @@ export class ChartComponent implements OnInit, OnChanges {
   public chartHovered(e: any): void {
 
   }
-
 
   constructor(private activitiesService: ActivitiesService, public datepipe: DatePipe) {
     this.toDate = new Date();
@@ -100,13 +101,10 @@ export class ChartComponent implements OnInit, OnChanges {
     this.getDistribution();
   }
 
-  reload() {
-    this.range = this.createRange();
-    this.getReport();
-    this.getDistribution();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
+  onDateRangeChanged(event: IMyDateRangeModel) {
+    this.dateRange = new DateRange();
+    this.dateRange.beginDate.IMDate(event.beginDate);
+    this.dateRange.endDate.IMDate(event.endDate);
     this.range = this.createRange();
     this.getReport();
     this.getDistribution();
@@ -150,20 +148,26 @@ export class ChartComponent implements OnInit, OnChanges {
     });
   }
 
-  test() {
-    console.log(this.range);
-  }
-
   private getFromInitDate(): Date {
     let date = new Date();
     date.setDate(date.getDate() - 7);
     return date;
   }
 
+  private createDataRange(): DateRange {
+    let today = new Date();
+    let dateFrom = new Date();
+    dateFrom.setDate(dateFrom.getDate() - 14);
+    let range = new DateRange();
+    range.beginDate.Date(dateFrom);
+    range.endDate.Date(today);
+    return range;
+  }
+
   private createRange(): Range {
     let range = new Range();
-    range.from = this.datepipe.transform(this.fromDate, 'yyyy-MM-dd');
-    range.to = this.datepipe.transform(this.toDate, 'yyyy-MM-dd');
+    range.from = this.datepipe.transform(this.dateRange.beginDate.toDate(), 'yyyy-MM-dd');
+    range.to = this.datepipe.transform(this.dateRange.endDate.toDate(), 'yyyy-MM-dd');
     return range;
   }
 }

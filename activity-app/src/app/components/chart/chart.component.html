@@ -5,10 +5,10 @@
 </div>
 <div class="row justify-content-center margin-top20">
   <div class="col flex-center">
-    <label for="from">From: </label>
-    <ng-datepicker id="from" [(ngModel)]="fromDate" [options]="dateOptions" (ngModelChange)="reload()"></ng-datepicker>
-    <label for="to">To: </label>
-    <ng-datepicker id="to" [(ngModel)]="toDate" [options]="dateOptions" (ngModelChange)="reload()"></ng-datepicker>
+    <form #myForm="ngForm" novalidate>
+      <my-date-range-picker name="mydaterange" [options]="myDateRangePickerOptions"
+                            [(ngModel)]="dateRange" (dateRangeChanged)="onDateRangeChanged($event)" required></my-date-range-picker>
+    </form>
   </div>
 </div>
 <div class="row justify-content-center margin-top20">

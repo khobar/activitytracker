@@ -22,7 +22,7 @@
   filter: invert(1);
 }
 
-.centered{
+.centered {
   margin: 0 auto;
 }
 
@@ -33,11 +33,38 @@
 .clickable {
   cursor: pointer;
 }
-.margin-top20{
+
+.margin-top20 {
   margin-top: 20px;
 }
 
 //datepicker
-.ngx-datepicker-calendar-container{
+.ngx-datepicker-calendar-container {
   z-index: 999;
+}
+
+//datepicker
+.mydrp .selection {
+  border-radius: 0 !important;
+  padding: 0 0 0 20px !important;
+  position: initial !important;
+}
+
+.mydrp .range {
+  background-color: #a2bbe2 !important;
+}
+
+.mydrp .selecteddaybegin, .mydrp .selecteddayend, .mydrp .selectedmonth .monthvalue, .mydrp .selectedyear .yearvalue {
+  color: white !important;
+  border: none !important;
+  background-color: #2c59a0 !important;
+  border-radius: 0 !important;
+}
+
+.mydrp, .mydrp .headertodaybtn, .mydrp .selection, .mydrp .selectiongroup, .mydrp .selector {
+  border-radius: 0 !important;
+}
+
+.mydrp .markcurrday, .mydrp .markcurrmonth, .mydrp .markcurryear {
+  font-weight: bold !important;
 }

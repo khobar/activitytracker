@@ -17,8 +17,8 @@ import {ActivitiesService} from "./services/activities.service";
 import {NgHttpLoaderModule} from "ng-http-loader/ng-http-loader.module";
 import {ChartComponent} from './components/chart/chart.component';
 import {MDBBootstrapModule} from 'angular-bootstrap-md';
-import {NgDatepickerModule} from "ng2-datepicker";
 import {DatePipe} from "@angular/common";
+import {MyDateRangePickerModule} from "mydaterangepicker";
 
 
 @NgModule({
@@ -28,7 +28,7 @@ import {DatePipe} from "@angular/common";
     HttpClientModule,
     NgHttpLoaderModule,
     MDBBootstrapModule.forRoot(),
-    NgDatepickerModule,
+    MyDateRangePickerModule,
     routing,
   ],
   declarations: [
