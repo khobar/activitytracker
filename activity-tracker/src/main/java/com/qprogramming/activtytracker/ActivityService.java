@@ -104,9 +104,24 @@ public class ActivityService {
         long days = start.until(range.getTo(), ChronoUnit.DAYS) + 1;
         List<LocalDate> allDates = Stream.iterate(start, d -> d.plusDays(1)).limit(days).filter(notWeekend()).collect(Collectors.toList());
         Map<LocalDate, List<Activity>> collect = activities.stream().collect(groupingBy(activity -> activity.getStart().toLocalDate(), Collectors.toList()));
-        allDates.forEach(date -> result.put(date, collect.getOrDefault(date, Collections.singletonList(emtpyDevActivity(date)))));
+        allDates.forEach(date -> result.put(date, getActivitiesForWorkingDays(collect, date)));
         return result;
     }
+
+    /**
+     * If for given date, there is at least one non_working activity, just discard other , and return that activity
+     *
+     * @param collect prepopulated all activities grouped by date
+     * @param date    date for which activities should be returned
+     * @return list of activities grouped for date
+     */
+    private List<Activity> getActivitiesForWorkingDays(Map<LocalDate, List<Activity>> collect, LocalDate date) {
+        List<Activity> result = collect.getOrDefault(date, Collections.singletonList(emtpyDevActivity(date)));
+        Optional<Activity> nonWorking = result.stream().filter(activity -> activity.getType() == Type.NON_WORKING).findFirst();
+        return nonWorking.map(Arrays::asList).orElse(result);
+
+    }
+
 
     /**
      * Creates empty DEV activity at certain date at 8 am
@@ -224,6 +239,12 @@ public class ActivityService {
                 minutes.put(Type.DEV, debMinutes + diff);
             }
         }
+    }
+    public Activity addNonWorkingActivity(LocalDate localDate) throws IOException, ConfigurationException {
+        Activity activity = new Activity(Type.NON_WORKING);
+        activity.setStart(localDate.atTime(8, 0));
+        activity.setEnd(activity.getStart().plusMinutes(minutesPerDay));
+        return addNewActivity(activity,false);
     }
 
     /**

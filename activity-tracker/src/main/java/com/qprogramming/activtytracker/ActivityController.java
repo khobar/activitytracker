@@ -159,4 +159,18 @@ public class ActivityController {
         }
         return Response.ok(dbUser).build();
     }
+
+    @POST
+    @Path("/add")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("USER")
+    public Response addNotWorkingDay(String date) throws ConfigurationException, IOException {
+        if (StringUtils.isEmpty(date)) {
+            throw new ValidationException("No date passed");
+        }
+        Activity activity = activityService.addNonWorkingActivity(LocalDate.parse(date));
+        return Response.ok(activity).build();
+    }
+
+
 }

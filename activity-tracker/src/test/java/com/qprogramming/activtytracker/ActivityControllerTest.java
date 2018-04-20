@@ -182,14 +182,32 @@ public class ActivityControllerTest {
         activity.setMinutes(80);
         activities.add(activity);
         doReturn(activities).when(activityService).loadAll();
-        doCallRealMethod().when(activityService).loadDateGroupedActivitiesInRange(any(Range.class));
-        doCallRealMethod().when(activityService).createActivityReport(any());
-        doCallRealMethod().when(activityService).fillToFullDay(any(), any());
         Response distribution = ctr.getDistribution(null);
         Map<Type, Long> distributionMap = (Map<Type, Long>) distribution.getEntity();
-        assertEquals(2, distributionMap.keySet().size());
+        assertEquals(3, distributionMap.keySet().size());
         assertEquals(71L, (long) distributionMap.get(Type.DEV));
         assertEquals(29L, (long) distributionMap.get(Type.SM));
+    }
+
+    @Test
+    public void testDistributionWithNonWorking() throws IOException, ConfigurationException {
+        ArrayList<Activity> activities = createActivities();
+        Activity activity = new Activity();
+        activity.setStart(LocalDateTime.now().minusDays(1));
+        activity.setType(Type.SM);
+        activity.setMinutes(80);
+        Activity nonWorkingActivity = new Activity();
+        nonWorkingActivity.setStart(LocalDateTime.now());
+        nonWorkingActivity.setType(Type.NON_WORKING);
+        nonWorkingActivity.setMinutes(7L * 60);
+        activities.add(activity);
+        activities.add(nonWorkingActivity);
+        doReturn(activities).when(activityService).loadAll();
+        Response distribution = ctr.getDistribution(null);
+        Map<Type, Long> distributionMap = (Map<Type, Long>) distribution.getEntity();
+        assertEquals(40, (long) distributionMap.get(Type.DEV));
+        assertEquals(10, (long) distributionMap.get(Type.SM));
+        assertEquals(50, (long) distributionMap.get(Type.NON_WORKING));
     }
 
     @Test
@@ -201,9 +219,6 @@ public class ActivityControllerTest {
         activity.setMinutes(80);
         activities.add(activity);
         doReturn(activities).when(activityService).loadAll();
-        doCallRealMethod().when(activityService).loadDateGroupedActivitiesInRange(any(Range.class));
-        doCallRealMethod().when(activityService).createActivityReport(any());
-        doCallRealMethod().when(activityService).fillToFullDay(any(), any());
         Range range = new Range();
         range.setFromDate(LocalDate.now().minusDays(2));
         Response distribution = ctr.getDistribution(range);
@@ -211,4 +226,18 @@ public class ActivityControllerTest {
         assertEquals(16L, (long) distributionMap.get(Type.SM));
     }
 
+    @Test
+    public void addNotWorkingDay() throws IOException, ConfigurationException {
+        String today = LocalDate.now().toString();
+        Response response = ctr.addNotWorkingDay(today);
+        Activity result = (Activity) response.getEntity();
+        assertEquals(Type.NON_WORKING, result.getType());
+        assertEquals(7L * 60, result.getMinutes());
+    }
+
+    @Test(expected = ValidationException.class)
+    public void addNotWorkingDayNoDatePassed() throws IOException, ConfigurationException {
+        Response response = ctr.addNotWorkingDay("");
+        fail("Exception not thrown");
+    }
 }
