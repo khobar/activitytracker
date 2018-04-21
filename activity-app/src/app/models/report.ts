@@ -2,13 +2,14 @@ import {IMyDate} from "mydaterangepicker/dist/interfaces/my-date.interface";
 
 export class ReportData {
   date: string;
-  minutes: DEVSM;
-  hours: DEVSM;
+  minutes: DEVSMNON;
+  hours: DEVSMNON;
 }
 
-export class DEVSM {
+export class DEVSMNON {
   DEV: number;
   SM: number;
+  NON_WORKING:number
 }
 
 export class Range {

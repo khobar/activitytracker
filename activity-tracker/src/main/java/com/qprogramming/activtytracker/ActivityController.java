@@ -161,7 +161,7 @@ public class ActivityController {
     }
 
     @POST
-    @Path("/add")
+    @Path("/add-non-working")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("USER")
     public Response addNotWorkingDay(String date) throws ConfigurationException, IOException {

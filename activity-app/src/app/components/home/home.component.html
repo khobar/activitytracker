@@ -6,21 +6,28 @@
 
 <div *ngIf="!active">
   <div class="row justify-content-center">
-    <div class="col-4">
+    <div class="col">
       <button class="btn activity-btn clickable" (click)="startActivity(Type.SM)">
         <img class="activity-img" src="assets/SM.png">
         {{types[Type.SM]}}
       </button>
     </div>
-    <div class="col-4">
-      <button class="btn activity-btn DEV pull-right clickable" (click)="startActivity(Type.DEV)">
+    <div class="col">
+      <button class="btn activity-btn DEV clickable" (click)="startActivity(Type.DEV)">
         <img class="activity-img" src="assets/DEV.png">
         {{types[Type.DEV]}}
       </button>
     </div>
+    <div class="col">
+      <app-add-activity></app-add-activity>
+    </div>
+    <div class="col">
+      <app-non-working></app-non-working>
+    </div>
   </div>
   <div class="row justify-content-center">
-    <div class="col-4"></div>
+    <div class="col-4">
+    </div>
   </div>
 </div>
 <div *ngIf="active">

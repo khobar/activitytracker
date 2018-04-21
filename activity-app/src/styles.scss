@@ -68,3 +68,27 @@
 .mydrp .markcurrday, .mydrp .markcurrmonth, .mydrp .markcurryear {
   font-weight: bold !important;
 }
+
+.mydp > div > input {
+  margin-left: 50px !important;
+}
+
+.mydp .selectiongroup {
+  border-radius: 0 !important;
+  padding: 0 0 0 20px !important;
+  position: initial !important;
+}
+
+.mydp, .mydp .headertodaybtn, .mydp .selection, .mydp .selectiongroup, .mydp .selector {
+  border-radius: 0 !important;
+}
+
+//modals
+.light-blue.darken-3 {
+  background-color: #2c5aa0 !important;
+}
+
+.mini-input-center {
+  width: 50% !important;
+  margin: 0 auto !important;
+}

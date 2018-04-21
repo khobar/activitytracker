@@ -4,7 +4,7 @@ import {Observable} from "rxjs/Observable";
 import {Activity} from "../models/activity";
 import {environment} from "../../environments/environment";
 import {Type} from "../models/type";
-import {DEVSM, Range, ReportData} from "../models/report";
+import {DEVSMNON, Range, ReportData} from "../models/report";
 
 @Injectable()
 export class ActivitiesService {
@@ -28,8 +28,8 @@ export class ActivitiesService {
     return this.http.post<ReportData[]>(environment.baseURL + 'report', range);
   }
 
-  distribution(range: Range): Observable<DEVSM> {
-    return this.http.post<DEVSM>(environment.baseURL + 'distribution', range);
+  distribution(range: Range): Observable<DEVSMNON> {
+    return this.http.post<DEVSMNON>(environment.baseURL + 'distribution', range);
   }
 
 
@@ -39,6 +39,10 @@ export class ActivitiesService {
 
   start(type: Type): Observable<Activity> {
     return this.http.post<Activity>(environment.baseURL + 'start', {type: type});
+  }
+
+  nonWorking(date: String): Observable<Activity> {
+    return this.http.post<Activity>(environment.baseURL + 'add-non-working', date);
   }
 
   static transform(activity) {

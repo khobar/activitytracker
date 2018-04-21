@@ -229,6 +229,8 @@ public class ActivityControllerTest {
     @Test
     public void addNotWorkingDay() throws IOException, ConfigurationException {
         String today = LocalDate.now().toString();
+        Activity nonWorking = new Activity();
+        nonWorking.setStartTime(today);
         Response response = ctr.addNotWorkingDay(today);
         Activity result = (Activity) response.getEntity();
         assertEquals(Type.NON_WORKING, result.getType());

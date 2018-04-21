@@ -1,0 +1,40 @@
+<button class="btn activity-btn DEV pull-right clickable" (click)="form.show()" mdbWavesEffect>
+  <img class="activity-img" src="assets/NON_WORKING.png">
+  {{Types[Type.NON_WORKING]}}
+</button>
+<!--Modal: Contact form-->
+<div mdbModal #form="mdb-modal" class="modal fade" id="modalContactForm" tabindex="-1" role="dialog"
+     [config]="{class: 'modal-style', ignoreBackdropClick: true}"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog cascading-modal" role="document">
+    <!--Content-->
+    <div class="modal-content">
+
+      <!--Header-->
+      <div class="modal-header light-blue darken-3 white-text">
+        <h4 class="title"><i class="fa fa-calendar-plus-o"></i> Add non-working day</h4>
+        <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close"
+                (click)="dismiss()">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body mb-0">
+        <div class="md-form form-sm mini-input-center">
+          <form #f="ngForm">
+            <my-date-picker name="mydate" [options]="myDatePickerOptions" #dp
+                            [(ngModel)]="datePickerDate" required id="form1"
+                            (dateChanged)="onDateChanged($event)"></my-date-picker>
+          </form>
+          <!--<input mdbInputDirective type="text" id="form1" class="form-control">-->
+        </div>
+        <div class="text-center mt-1-half">
+          <button class="btn btn-primary mb-2 waves-light" mdbWavesEffect [disabled]="f.form.invalid" (click)="addNonWorkingDay()"> Add <i
+            class="fa fa-calendar-plus-o ml-1"></i></button>
+        </div>
+      </div>
+    </div>
+    <!--/.Content-->
+  </div>
+</div>
+<!--Modal: Contact form-->

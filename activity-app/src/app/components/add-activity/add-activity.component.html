@@ -1,0 +1,45 @@
+<button class="btn activity-btn DEV pull-right clickable" (click)="form.show()" mdbWavesEffect>
+  <img class="activity-img" src="assets/ADD_NEW.png">
+  Add activity
+</button>
+<!--Modal: Contact form-->
+<div mdbModal #form="mdb-modal" class="modal fade" id="modalContactForm" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog cascading-modal" role="document">
+    <!--Content-->
+    <div class="modal-content">
+
+      <!--Header-->
+      <div class="modal-header light-blue darken-3 white-text">
+        <h4 class="title"><i class="fa fa-pencil"></i> Add new activity</h4>
+        <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close"
+                (click)="form.hide()">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body mb-0">
+        <div class="md-form form-sm">
+          <i class="fa fa-calendar prefix"></i>
+          <input mdbInputDirective type="text" id="form1" class="form-control">
+          <label for="form1">Date</label>
+        </div>
+        <div class="md-form form-sm">
+          <i class="fa fa-clock-o prefix"></i>
+          <input mdbInputDirective type="text" id="form2" class="form-control">
+          <label for="form2">Time started</label>
+        </div>
+        <div class="md-form form-sm">
+          <i class="fa fa-clock-o prefix"></i>
+          <input mdbInputDirective type="text" id="form3" class="form-control">
+          <label for="form3">Time End</label>
+        </div>
+        <div class="text-center mt-1-half">
+          <button class="btn btn-info mb-2 waves-light" mdbWavesEffect>Add <i class="fa fa-send ml-1"></i></button>
+        </div>
+      </div>
+    </div>
+    <!--/.Content-->
+  </div>
+</div>
+<!--Modal: Contact form-->

@@ -7,18 +7,19 @@
   <div class="col flex-center">
     <form #myForm="ngForm" novalidate>
       <my-date-range-picker name="mydaterange" [options]="myDateRangePickerOptions"
-                            [(ngModel)]="dateRange" (dateRangeChanged)="onDateRangeChanged($event)" required></my-date-range-picker>
+                            [(ngModel)]="dateRange" (dateRangeChanged)="onDateRangeChanged($event)"
+                            required></my-date-range-picker>
     </form>
   </div>
 </div>
 <div class="row justify-content-center margin-top20">
   <div class="col">
     <canvas mdbChart class="centered"
-            [chartType]="reportChartType"
+            [chartType]="chartsOptions.reportChartType"
             [datasets]="reportDatasets"
             [labels]="reportChartLabels"
-            [options]="reportOptions"
-            [colors]="reportColors"
+            [options]="chartsOptions.reportOptions"
+            [colors]="chartsOptions.reportColors"
             [legend]="true"
             (chartHover)="chartHovered($event)"
             (chartClick)="chartClicked($event)">
@@ -26,11 +27,11 @@
   </div>
   <div class="col">
     <canvas mdbChart class="centered"
-            [chartType]="distChartType"
+            [chartType]="chartsOptions.distChartType"
             [data]="distDatasets"
-            [labels]="distChartLabels"
-            [colors]="distChartColors"
-            [options]="distOptions"
+            [labels]="chartsOptions.distChartLabels"
+            [colors]="chartsOptions.distChartColors"
+            [options]="chartsOptions.distOptions"
             [legend]="true"
             (chartHover)="chartHovered($event)"
             (chartClick)="chartClicked($event)">
