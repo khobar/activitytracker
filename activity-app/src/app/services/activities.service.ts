@@ -45,6 +45,11 @@ export class ActivitiesService {
     return this.http.post<Activity>(environment.baseURL + 'add-non-working', date);
   }
 
+  add(activity: Activity): Observable<Activity> {
+    return this.http.post<Activity>(environment.baseURL + 'add', activity);
+  }
+
+
   static transform(activity) {
 //TODO transform date fields via map
     return activity
