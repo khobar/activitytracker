@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://q-programming.pl/Activities" version="1.0.0" viewmodes="maximized">
+    <access origin="*" subdomains="true"></access>
+    <tizen:app-widget id="ICBKrqyLwY.Activities.Activities" primary="true" max-instance="0">
+        <tizen:widget-label>Activities</tizen:widget-label>
+        <tizen:widget-content src="widget/Activities/index.html">
+            <tizen:widget-size preview="widget/Activities/preview.png">2x2</tizen:widget-size>
+        </tizen:widget-content>
+    </tizen:app-widget>
+    <tizen:application id="ICBKrqyLwY.Activities" package="ICBKrqyLwY" required_version="3.0"/>
+    <author href="https://q-programming.pl" email="jakub.romaniszyn@gmail.com">Jakub Romaniszyn</author>
+    <content src="index.html"/>
+    <feature name="http://tizen.org/feature/screen.size.normal"/>
+    <icon src="icon.png"/>
+    <name>Activities</name>
+    <name xml:lang="en-gb">English</name>
+    <name xml:lang="pl-pl">Polski</name>
+    <tizen:privilege name="http://tizen.org/privilege/internet"/>
+    <tizen:profile name="wearable"/>
+    <tizen:setting background-support="disable" encryption="disable" hwkey-event="enable"/>
+</widget>

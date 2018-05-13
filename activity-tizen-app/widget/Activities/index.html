@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<script src="js/main.js"></script>
+<script src="js/loader.js"></script>
+<script src="js/activities.js"></script>
+<script src="js/connection.js"></script>
+<style></style>
+</head>
+
+<body>
+	<div id="page">
+		<div class="header">
+			<p>Activity Tracking</p>
+		</div>
+		<!-- Loader -->
+		<img id="loader_img">
+		<!-- Minutes Start-->
+		<div id="minutes_body">
+			<span id="minutes"></span><br> <span id="minutes_type"></span>
+		</div>
+		<!-- Minutes End -->
+		<!-- Page Start -->
+		<div id="buttons_body" class="buttons_body">
+			<div class="split" id="SM">
+				<div>
+					<button onclick="handleActivity('SM')">
+						<img id="SM_btn" class="btn-image" src="images/SM.png" />
+					</button>
+				</div>
+				<div>Scrum Master</div>
+			</div>
+			<div class="split" id="DEV">
+				<div>
+					<button onclick="handleActivity('DEV')">
+						<img id="DEV_btn" class="btn-image" src="images/DEV.png" />
+					</button>
+				</div>
+				<div>Developer</div>
+			</div>
+			<div>
+				<!-- Hours today : -->
+			</div>
+		</div>
+		<!-- Page End -->
+		<!-- Active Start -->
+		<div id="active_body">
+			<div>
+				Started: <span id="active_start"></span>
+			</div>
+			<div>
+				<span id="active_time" class="active_time"></span>
+			</div>
+			<div>
+				<img id="active_icon" class="active_icon" src="" /><span
+					id="active_text" class="active_text"></span>
+			</div>
+			<div class="active_stop" onclick="stopActivity()">Stop Activity
+			</div>
+		</div>
+		<!-- Active End -->
+	</div>
+</body>
+</html>
