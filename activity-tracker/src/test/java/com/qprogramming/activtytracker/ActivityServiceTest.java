@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,10 +43,10 @@ public class ActivityServiceTest {
     @Test
     public void testLoadLastActive() {
         Activity ac1 = new Activity();
-        ac1.setStart(LocalDateTime.now());
-        ac1.setEnd(LocalDateTime.now().plusHours(1));
+        ac1.setStart(ZonedDateTime.now());
+        ac1.setEnd(ZonedDateTime.now().plusHours(1));
         Activity ac2 = new Activity();
-        ac2.setStart(LocalDateTime.now().plusHours(1));
+        ac2.setStart(ZonedDateTime.now().plusHours(1));
         List<Activity> activities = Arrays.asList(ac1, ac2);
         Activity lastActive = activityService.getLastActive(activities);
         assertNotNull(lastActive);
@@ -68,11 +69,11 @@ public class ActivityServiceTest {
     @Test
     public void testLoadLastActiveNotFound() {
         Activity ac1 = new Activity();
-        ac1.setStart(LocalDateTime.now());
-        ac1.setEnd(LocalDateTime.now().plusHours(1));
+        ac1.setStart(ZonedDateTime.now());
+        ac1.setEnd(ZonedDateTime.now().plusHours(1));
         Activity ac2 = new Activity();
-        ac2.setStart(LocalDateTime.now().plusHours(1));
-        ac2.setEnd(LocalDateTime.now().plusHours(2));
+        ac2.setStart(ZonedDateTime.now().plusHours(1));
+        ac2.setEnd(ZonedDateTime.now().plusHours(2));
         List<Activity> activities = Arrays.asList(ac1, ac2);
         Activity lastActive = activityService.getLastActive(activities);
         assertNull(lastActive);
@@ -90,7 +91,7 @@ public class ActivityServiceTest {
     public void testAddNewActivityComplete() throws IOException, ConfigurationException {
         Activity ac = new Activity();
         ac.setType(Type.SM);
-        ac.setStart(LocalDateTime.now());
+        ac.setStart(ZonedDateTime.now());
         Activity activity = activityService.addNewActivity(ac, true);
         assertNotNull(activity.getStartTime());
     }

@@ -3,7 +3,7 @@ import {Type, Types} from "../../models/type";
 export const chartsOptions = {
   reportChartType: 'bar',
 
-  distChartType:'doughnut',
+  distChartType: 'doughnut',
   distChartLabels: [Types[Type.DEV], Types[Type.SM], Types[Type.NON_WORKING]],
   reportColors: [
     {
@@ -40,6 +40,21 @@ export const chartsOptions = {
     }
   },
   distOptions: {
-    responsive: false
+    responsive: false,
+    tooltips: {
+      callbacks: {
+        label: function (tooltipItem, data) {
+          let dataset = data.datasets[tooltipItem.datasetIndex];
+          let meta = dataset._meta[Object.keys(dataset._meta)[0]];
+          let total = meta.total;
+          let currentValue = dataset.data[tooltipItem.index];
+          let percentage = parseFloat((currentValue / total * 100).toFixed(1));
+          return percentage + '%';
+        },
+        title: function (tooltipItem, data) {
+          return data.labels[tooltipItem[0].index];
+        }
+      }
+    }
   }
 };

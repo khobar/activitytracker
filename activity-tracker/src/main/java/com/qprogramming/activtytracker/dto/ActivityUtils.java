@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
@@ -15,7 +17,9 @@ public class ActivityUtils {
     private static final int MINUTES = 3;
 
     private static final String DELIMITER = ";";
+    private static final DateTimeFormatter zdtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmXXX");
     private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+
 
     /**
      * Converts string line to {@link Activity}
@@ -76,24 +80,30 @@ public class ActivityUtils {
         return minutes == 0 ? 0 : BigDecimal.valueOf(minutes / 60d).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
-    private static String dateToString(LocalDateTime t) {
-        return t != null ? t.format(dtf) : "";
+    private static String dateToString(ZonedDateTime t) {
+        return t != null ? t.format(zdtf) : "";
     }
 
 
-    private static LocalDateTime getDate(String s) {
+    private static ZonedDateTime getDate(String s) {
         if (StringUtils.isNoneBlank(s)) {
-            return LocalDateTime.parse(s);
+            try {
+                return ZonedDateTime.parse(s);
+            } catch (java.time.format.DateTimeParseException e) {
+                //if failed to parse zonedatetime, try to parse it to LocalDateTime and add current zone
+                LocalDateTime localDateTime = LocalDateTime.parse(s);
+                return ZonedDateTime.of(localDateTime, ZoneId.systemDefault());
+            }
         }
         return null;
     }
 
     public static void stringifyTimes(Activity ac) {
         if (ac.getStart() != null) {
-            ac.setStartTime(ac.getStart().format(dtf));
+            ac.setStartTime(ac.getStart().format(zdtf));
         }
         if (ac.getEnd() != null) {
-            ac.setEndTime(ac.getEnd().format(dtf));
+            ac.setEndTime(ac.getEnd().format(zdtf));
         }
     }
 }

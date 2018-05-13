@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static com.qprogramming.activtytracker.ActivityService.DATABASE_FILE;
@@ -66,7 +67,7 @@ public class ActivityControllerTest {
     @Test
     public void testGetNoActive() throws Exception {
         ArrayList<Activity> activities = createActivities();
-        activities.get(1).setEnd(LocalDateTime.now().plusMinutes(1));
+        activities.get(1).setEnd(ZonedDateTime.now().plusMinutes(1));
         doReturn(activities).when(activityService).loadAll();
         doCallRealMethod().when(activityService).getLastActive(activities);
         Activity result = (Activity) ctr.getActive().getEntity();
@@ -105,7 +106,7 @@ public class ActivityControllerTest {
         ctr = new ActivityController(activityService, userServiceMock);
         ArrayList<Activity> activities = createActivities();
         Activity ac = new Activity();
-        ac.setStartTime("2018-03-18T14:00");
+        ac.setStartTime("2018-03-18T14:00+02:00");
         ac.setMinutes(61);
         ac.setType(Type.SM);
         when(activityService.loadAll()).thenReturn(activities);
@@ -114,7 +115,7 @@ public class ActivityControllerTest {
         Response response = ctr.addActivity(ac);
         Activity activity = (Activity) response.getEntity();
 
-        String expected = "SM;2018-03-18T14:00;2018-03-18T15:01;61";
+        String expected = "SM;2018-03-18T14:00+02:00;2018-03-18T15:01+02:00;61";
         String resultString = ActivityUtils.toLine(activity);
         assertEquals(200, response.getStatus());
         assertNotNull(activity);
@@ -134,7 +135,7 @@ public class ActivityControllerTest {
     public void testCreateActivityReport() throws IOException, ConfigurationException {
         ArrayList<Activity> activities = createActivities();
         Activity activity = new Activity();
-        activity.setStart(LocalDateTime.now().minusDays(1));
+        activity.setStart(ZonedDateTime.now().minusDays(1));
         activity.setType(Type.SM);
         activity.setMinutes(80);
         activities.add(activity);
@@ -177,7 +178,7 @@ public class ActivityControllerTest {
     public void testDistribution() throws IOException, ConfigurationException {
         ArrayList<Activity> activities = createActivities();
         Activity activity = new Activity();
-        activity.setStart(LocalDateTime.now().minusDays(1));
+        activity.setStart(ZonedDateTime.now().minusDays(1));
         activity.setType(Type.SM);
         activity.setMinutes(80);
         activities.add(activity);
@@ -193,11 +194,11 @@ public class ActivityControllerTest {
     public void testDistributionWithNonWorking() throws IOException, ConfigurationException {
         ArrayList<Activity> activities = createActivities();
         Activity activity = new Activity();
-        activity.setStart(LocalDateTime.now().minusDays(1));
+        activity.setStart(ZonedDateTime.now().minusDays(1));
         activity.setType(Type.SM);
         activity.setMinutes(80);
         Activity nonWorkingActivity = new Activity();
-        nonWorkingActivity.setStart(LocalDateTime.now());
+        nonWorkingActivity.setStart(ZonedDateTime.now());
         nonWorkingActivity.setType(Type.NON_WORKING);
         nonWorkingActivity.setMinutes(7L * 60);
         activities.add(activity);
@@ -214,7 +215,7 @@ public class ActivityControllerTest {
     public void testDistributionInRange() throws IOException, ConfigurationException {
         ArrayList<Activity> activities = createActivities();
         Activity activity = new Activity();
-        activity.setStart(LocalDateTime.now().minusDays(2));
+        activity.setStart(ZonedDateTime.now().minusDays(2));
         activity.setType(Type.SM);
         activity.setMinutes(80);
         activities.add(activity);

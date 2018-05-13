@@ -3,13 +3,14 @@ package com.qprogramming.activtytracker.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class Activity {
     @JsonIgnore
-    private LocalDateTime start;
+    private ZonedDateTime start;
     private String startTime;
     @JsonIgnore
-    private LocalDateTime end;
+    private ZonedDateTime end;
     private String endTime;
     private long minutes;
     private Type type;
@@ -21,19 +22,19 @@ public class Activity {
         this.type = type;
     }
 
-    public LocalDateTime getStart() {
+    public ZonedDateTime getStart() {
         return start;
     }
 
-    public void setStart(LocalDateTime start) {
+    public void setStart(ZonedDateTime start) {
         this.start = start;
     }
 
-    public LocalDateTime getEnd() {
+    public ZonedDateTime getEnd() {
         return end;
     }
 
-    public void setEnd(LocalDateTime end) {
+    public void setEnd(ZonedDateTime end) {
         this.end = end;
     }
 

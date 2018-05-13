@@ -17,7 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Predicate;
@@ -132,8 +133,9 @@ public class ActivityService {
     private Activity emtpyDevActivity(LocalDate date) {
         Activity activity = new Activity();
         activity.setType(Type.DEV);
-        activity.setStart(date.atTime(8, 0));
-        activity.setEnd(date.atTime(8, 0));
+        ZoneId zone = ZonedDateTime.now().getZone();
+        activity.setStart(ZonedDateTime.of(date.atTime(8, 0), zone));
+        activity.setEnd(ZonedDateTime.of(date.atTime(8, 0), zone));
         activity.setMinutes(0);
         return activity;
     }
@@ -169,7 +171,7 @@ public class ActivityService {
         if (complete) {
             Activity lastActive = getLastActive(activities);
             if (lastActive != null) {
-                lastActive.setEnd(LocalDateTime.now());
+                lastActive.setEnd(ZonedDateTime.now());
                 ActivityUtils.updateMinutes(lastActive);
             }
         }
@@ -240,11 +242,13 @@ public class ActivityService {
             }
         }
     }
+
     public Activity addNonWorkingActivity(LocalDate localDate) throws IOException, ConfigurationException {
         Activity activity = new Activity(Type.NON_WORKING);
-        activity.setStart(localDate.atTime(8, 0));
+        ZoneId zone = ZonedDateTime.now().getZone();
+        activity.setStart(ZonedDateTime.of(localDate.atTime(8, 0), zone));
         activity.setEnd(activity.getStart().plusMinutes(minutesPerDay));
-        return addNewActivity(activity,false);
+        return addNewActivity(activity, false);
     }
 
     /**

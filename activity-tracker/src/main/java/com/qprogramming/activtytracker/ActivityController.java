@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
@@ -70,11 +71,11 @@ public class ActivityController {
         if (StringUtils.isEmpty(ac.getStartTime())) {
             throw new ValidationException("No start date time in passed activity");
         }
-        ac.setStart(LocalDateTime.parse(ac.getStartTime()));
+        ac.setStart(ZonedDateTime.parse(ac.getStartTime()));
         if (ac.getEndTime() == null && ac.getMinutes() != 0) {
             ac.setEnd(ac.getStart().plusMinutes(ac.getMinutes()));
         } else {
-            ac.setEnd(LocalDateTime.parse(ac.getEndTime()));
+            ac.setEnd(ZonedDateTime.parse(ac.getEndTime()));
         }
         ac = activityService.addNewActivity(ac, false);
         return Response.ok(ac).build();
@@ -87,7 +88,7 @@ public class ActivityController {
     @RolesAllowed("USER")
     public Response startActivity(Activity ac) throws ConfigurationException, IOException {
         if (ac.getStart() == null) {
-            ac.setStart(LocalDateTime.now());
+            ac.setStart(ZonedDateTime.now());
         }
         if (ac.getType() == null) {
             ac.setType(Type.SM);
@@ -104,7 +105,7 @@ public class ActivityController {
         List<Activity> activities = activityService.loadAll();
         Activity lastActivity = activityService.getLastActive(activities);
         if (lastActivity != null) {
-            lastActivity.setEnd(LocalDateTime.now());
+            lastActivity.setEnd(ZonedDateTime.now());
             ActivityUtils.updateMinutes(lastActivity);
             activityService.saveAll(activities);
             stringifyTimes(lastActivity);
@@ -122,7 +123,7 @@ public class ActivityController {
         Activity lastActive = activityService.getLastActive(activities);
         if (lastActive != null) {
             stringifyTimes(lastActive);
-            lastActive.setMinutes(lastActive.getStart().until(LocalDateTime.now(), ChronoUnit.MINUTES));
+            lastActive.setMinutes(lastActive.getStart().until(ZonedDateTime.now(), ChronoUnit.MINUTES));
         }
         return Response.ok(lastActive).build();
     }
@@ -170,6 +171,20 @@ public class ActivityController {
         }
         Activity activity = activityService.addNonWorkingActivity(LocalDate.parse(date));
         return Response.ok(activity).build();
+    }
+
+    @GET
+    @Path("/rewriteTZ")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("USER")
+    public Response rewriteTZ() throws ConfigurationException, IOException {
+        List<Activity> activities = activityService.loadAll();
+        Activity lastActive = activityService.getLastActive(activities);
+        if (lastActive != null) {
+            stringifyTimes(lastActive);
+            lastActive.setMinutes(lastActive.getStart().until(ZonedDateTime.now(), ChronoUnit.MINUTES));
+        }
+        return Response.ok(lastActive).build();
     }
 
 
