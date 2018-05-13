@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivitiesService} from "../../services/activities.service";
 import {Type, Types} from "../../models/type";
 import {DatePipe} from "@angular/common";
-import {DateRange, Range} from "../../models/report";
+import {DateRange, Range, RDate} from "../../models/report";
 import {IMyDateRangeModel, IMyDrpOptions} from "mydaterangepicker";
 import {chartsOptions} from "./chart.options";
 
@@ -28,6 +28,7 @@ export class ChartComponent implements OnInit {
     showApplyBtn: false,
     dateFormat: 'dd.mm.yyyy',
     minYear: 2018,
+    disableSince: this.createAvailableRange(),
     showClearDateRangeBtn: false,
     editableDateRangeField: false,
     openSelectorOnInputClick: true,
@@ -126,5 +127,13 @@ export class ChartComponent implements OnInit {
     range.from = this.datepipe.transform(this.dateRange.beginDate.toDate(), 'yyyy-MM-dd');
     range.to = this.datepipe.transform(this.dateRange.endDate.toDate(), 'yyyy-MM-dd');
     return range;
+  }
+
+  private createAvailableRange(): RDate {
+    let date = new RDate();
+    let futureRange = new Date();
+    futureRange.setDate(futureRange.getDate() + 1);
+    date.Date(futureRange);
+    return date;
   }
 }

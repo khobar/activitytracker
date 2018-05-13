@@ -24,39 +24,33 @@
             <div class="text-center">
               <strong>Date</strong>
             </div>
-            <my-date-picker name="mydate" [options]="myDatePickerOptions" #dp [required]="true"
-                            [(ngModel)]="datePickerDate" required id="form1"
-                            (dateChanged)="onDateChanged($event)"></my-date-picker>
+            <div class="row">
+              <my-date-picker name="mydate" [options]="myDatePickerOptions" #dp [required]="true"
+                              [(ngModel)]="datePickerDate" required id="form1"
+                              (dateChanged)="onDateChanged($event)"></my-date-picker>
+            </div>
+            <div class="text-center">
+              <strong>From - To</strong>
+            </div>
+            <div class="row">
+              <div class="md-form col">
+                <input type="text" class="form-control" id="startTime" placeholder="HH:MM" [(ngModel)]="start"
+                       name="startTime" required>
+                <label class="sr-only" for="startTime">Start time</label>
+              </div>
+              <div class="md-form col">
+                <input type="text" class="form-control" id="endTime" placeholder="HH:MM" [(ngModel)]="end"
+                       required name="endTime">
+                <label class="sr-only" for="endTime">End time</label>
+              </div>
+            </div>
           </form>
         </div>
-        <div class="text-center">
-          <strong>From - To</strong>
-        </div>
-        <form class="form-inline">
-          <div class="md-form">
-            <input type="text" class="form-control" id="startTime" placeholder="HH:MM" [(ngModel)]="start" name="startTime">
-            <label class="sr-only" for="startTime">Start time</label>
-          </div>
-          -
-          <div class="md-form">
-            <input type="text" class="form-control" id="endTime" placeholder="HH:MM" [(ngModel)]="end" [required]="true" name="endTime">
-            <label class="sr-only" for="endTime">End time</label>
-          </div>
-        </form>
-        <!--<div class="md-form form-sm">-->
-          <!--<i class="fa fa-clock-o prefix"></i>-->
-          <!--<input mdbInputDirective type="text" id="form2" class="form-control" [(ngModel)]="start"-->
-                 <!--[required]="true">-->
-          <!--<label for="form2">Time started</label>-->
-        <!--</div>-->
-        <!--<div class="md-form form-sm">-->
-          <!--<i class="fa fa-clock-o prefix"></i>-->
-          <!--<input mdbInputDirective type="text" id="form3" class="form-control" [(ngModel)]="end" [required]="true">-->
-          <!--<label for="form3">Time End</label>-->
-        <!--</div>-->
+        <!--<form class="form-inline">-->
+        <!--</form>-->
         <div class="text-center mt-1-half">
-          <button class="btn btn-info mb-2 waves-light" mdbWavesEffect (click)="addActivity()">Add <i
-            class="fa fa-send ml-1"></i></button>
+          <button class="btn btn-info mb-2 waves-light" mdbWavesEffect (click)="addActivity()" [disabled]="f.form.invalid">Add <i
+            class="fa fa-plus-square-o ml-1"></i></button>
         </div>
       </div>
     </div>

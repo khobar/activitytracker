@@ -5,6 +5,7 @@ import {ModalDirective} from "angular-bootstrap-md/modals/modal.directive";
 import {ActivitiesService} from "../../services/activities.service";
 import {AlertService} from "../../services/alert.service";
 import {Activity} from "../../models/activity";
+import {RDate} from "../../models/report";
 
 @Component({
   selector: 'app-add-activity',
@@ -22,10 +23,11 @@ export class AddActivityComponent implements OnInit {
     dateFormat: 'yyyy-mm-dd',
     editableDateField: false,
     openSelectorOnInputClick: true,
-    height: "45px"
+    height: "45px",
+    disableSince: this.createAvailableRange(),
   };
-  start:string;
-  end:string;
+  start: string;
+  end: string;
   activity = new Activity();
   eventDate: string;
   datePickerDate: any;
@@ -55,5 +57,13 @@ export class AddActivityComponent implements OnInit {
   dismiss() {
     this.dp.clearDate();
     this.modal.hide();
+  }
+
+  private createAvailableRange(): RDate {
+    let date = new RDate();
+    let futureRange = new Date();
+    futureRange.setDate(futureRange.getDate() + 1);
+    date.Date(futureRange);
+    return date;
   }
 }
